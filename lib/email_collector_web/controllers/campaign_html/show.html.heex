@@ -2,7 +2,7 @@
   <header>
     <div class="campaign-header">
       <div class="campaign-title">
-        <h1><%= @campaign.name %></h1>
+        <h1>{@campaign.name}</h1>
         <p>Campaign Details</p>
       </div>
       <div class="campaign-actions">
@@ -18,19 +18,19 @@
       <div class="info-grid">
         <div class="info-item">
           <label>Campaign Name:</label>
-          <span><%= @campaign.name %></span>
+          <span>{@campaign.name}</span>
         </div>
         <div class="info-item">
           <label>Total Emails:</label>
-          <span><%= length(@emails) %></span>
+          <span>{length(@emails)}</span>
         </div>
         <div class="info-item">
           <label>Created:</label>
-          <span><%= Calendar.strftime(@campaign.inserted_at, "%B %d, %Y at %I:%M %p") %></span>
+          <span>{Calendar.strftime(@campaign.inserted_at, "%B %d, %Y at %I:%M %p")}</span>
         </div>
         <div class="info-item">
           <label>Last Updated:</label>
-          <span><%= Calendar.strftime(@campaign.updated_at, "%B %d, %Y at %I:%M %p") %></span>
+          <span>{Calendar.strftime(@campaign.updated_at, "%B %d, %Y at %I:%M %p")}</span>
         </div>
       </div>
     </div>
@@ -41,7 +41,7 @@
       <h2>Collected Emails</h2>
       <a href={~p"/profile"} class="btn btn-primary">Back to Profile</a>
     </div>
-    
+
     <%= if Enum.empty?(@emails) do %>
       <div class="empty-state">
         <p>No emails have been collected for this campaign yet.</p>
@@ -78,8 +78,8 @@
         <tbody>
           <%= for email <- @emails do %>
             <tr>
-              <td><%= email.name %></td>
-              <td><%= Calendar.strftime(email.inserted_at, "%B %d, %Y at %I:%M %p") %></td>
+              <td>{email.name}</td>
+              <td>{Calendar.strftime(email.inserted_at, "%B %d, %Y at %I:%M %p")}</td>
             </tr>
           <% end %>
         </tbody>
@@ -380,4 +380,4 @@
       });
     }
   }
-</script> 
+</script>

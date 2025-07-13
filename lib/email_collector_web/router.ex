@@ -21,7 +21,7 @@ defmodule EmailCollectorWeb.Router do
 
     get "/", PageController, :home
     get "/profile", UserController, :show
-    
+
     # Campaign CRUD routes
     get "/campaigns/new", CampaignController, :new
     post "/campaigns", CampaignController, :create

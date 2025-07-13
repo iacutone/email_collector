@@ -34,9 +34,9 @@ defmodule EmailCollectorWeb.UserControllerTest do
     test "users cannot access other users' profiles", %{conn: conn, user: user} do
       # Create another user
       other_user = user_fixture(%{email: "other@example.com"})
-      
+
       # Try to access other user's profile (should redirect to own profile)
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/profile")
@@ -52,9 +52,9 @@ defmodule EmailCollectorWeb.UserControllerTest do
       # Create another user and their campaign
       other_user = user_fixture(%{email: "other@example.com"})
       other_campaign = campaign_fixture(other_user)
-      
+
       # Access own profile
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/profile")

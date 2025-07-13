@@ -7,10 +7,16 @@
   <section class="form-section">
     <div class="form-card">
       <.form for={@changeset} action={~p"/campaigns/#{@campaign.id}"} method="put">
-        
         <div class="form-group">
           <label for="campaign_name">Campaign Name</label>
-          <input type="text" name="campaign[name]" id="campaign_name" value={@campaign.name} placeholder="Enter campaign name" required />
+          <input
+            type="text"
+            name="campaign[name]"
+            id="campaign_name"
+            value={@campaign.name}
+            placeholder="Enter campaign name"
+            required
+          />
         </div>
 
         <div class="form-actions">
@@ -103,4 +109,4 @@
     margin-top: 0.25rem;
     display: block;
   }
-</style> 
+</style>

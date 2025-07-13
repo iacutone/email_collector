@@ -9,7 +9,12 @@
   </div>
   <%= if @current_user do %>
     <.form for={%{}} action={~p"/auth/logout"} method="delete" class="inline">
-      <button type="submit" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium">Logout</button>
+      <button
+        type="submit"
+        class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium"
+      >
+        Logout
+      </button>
     </.form>
   <% end %>
 </header>

@@ -14,7 +14,7 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
 
   describe "campaign CRUD" do
     test "GET /campaigns/new shows new campaign form", %{conn: conn, user: user} do
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/campaigns/new")
@@ -24,7 +24,7 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
     end
 
     test "POST /campaigns creates new campaign", %{conn: conn, user: user} do
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> post(~p"/campaigns", %{campaign: %{name: "Test Campaign"}})
@@ -33,8 +33,14 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Campaign created successfully"
     end
 
-    test "GET /campaigns/:id shows campaign with emails", %{conn: conn, user: user, campaign: campaign, email1: email1, email2: email2} do
-      conn = 
+    test "GET /campaigns/:id shows campaign with emails", %{
+      conn: conn,
+      user: user,
+      campaign: campaign,
+      email1: email1,
+      email2: email2
+    } do
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/campaigns/#{campaign.id}")
@@ -46,7 +52,7 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
     end
 
     test "GET /campaigns/:id/edit shows edit form", %{conn: conn, user: user, campaign: campaign} do
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/campaigns/#{campaign.id}/edit")
@@ -56,7 +62,7 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
     end
 
     test "PUT /campaigns/:id updates campaign", %{conn: conn, user: user, campaign: campaign} do
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> put(~p"/campaigns/#{campaign.id}", %{campaign: %{name: "Updated Campaign"}})
@@ -66,7 +72,7 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
     end
 
     test "DELETE /campaigns/:id deletes campaign", %{conn: conn, user: user, campaign: campaign} do
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> delete(~p"/campaigns/#{campaign.id}")
@@ -103,8 +109,14 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
   end
 
   describe "download CSV" do
-    test "GET /campaigns/:id/download downloads CSV for specific campaign", %{conn: conn, user: user, campaign: campaign, email1: email1, email2: email2} do
-      conn = 
+    test "GET /campaigns/:id/download downloads CSV for specific campaign", %{
+      conn: conn,
+      user: user,
+      campaign: campaign,
+      email1: email1,
+      email2: email2
+    } do
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/campaigns/#{campaign.id}/download")
@@ -123,17 +135,24 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
       assert csv_content =~ email2.name
     end
 
-    test "GET /campaigns/:id/download redirects to login if not authenticated", %{conn: conn, campaign: campaign} do
+    test "GET /campaigns/:id/download redirects to login if not authenticated", %{
+      conn: conn,
+      campaign: campaign
+    } do
       conn = get(conn, ~p"/campaigns/#{campaign.id}/download")
       assert redirected_to(conn) == "/auth/login"
     end
 
-    test "GET /campaigns/:id/download returns error for non-owned campaign", %{conn: conn, user: user, campaign: _campaign} do
+    test "GET /campaigns/:id/download returns error for non-owned campaign", %{
+      conn: conn,
+      user: user,
+      campaign: _campaign
+    } do
       # Create another user and campaign
       other_user = user_fixture(%{email: "other@example.com"})
       other_campaign = campaign_fixture(other_user)
 
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/campaigns/#{other_campaign.id}/download")
@@ -148,9 +167,9 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
       # Create another user and their campaign
       other_user = user_fixture(%{email: "other@example.com"})
       other_campaign = campaign_fixture(other_user)
-      
+
       # Try to view other user's campaign
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/campaigns/#{other_campaign.id}")
@@ -163,9 +182,9 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
       # Create another user and their campaign
       other_user = user_fixture(%{email: "other@example.com"})
       other_campaign = campaign_fixture(other_user)
-      
+
       # Try to edit other user's campaign
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/campaigns/#{other_campaign.id}/edit")
@@ -178,9 +197,9 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
       # Create another user and their campaign
       other_user = user_fixture(%{email: "other@example.com"})
       other_campaign = campaign_fixture(other_user)
-      
+
       # Try to update other user's campaign
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> put(~p"/campaigns/#{other_campaign.id}", %{campaign: %{name: "Hacked Campaign"}})
@@ -193,9 +212,9 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
       # Create another user and their campaign
       other_user = user_fixture(%{email: "other@example.com"})
       other_campaign = campaign_fixture(other_user)
-      
+
       # Try to delete other user's campaign
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> delete(~p"/campaigns/#{other_campaign.id}")
@@ -209,9 +228,9 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
       other_user = user_fixture(%{email: "other@example.com"})
       other_campaign = campaign_fixture(other_user)
       _other_email = email_fixture(other_user, other_campaign)
-      
+
       # Try to download other user's campaign CSV
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/campaigns/#{other_campaign.id}/download")
@@ -224,16 +243,16 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
       # This test verifies that the campaign creation form is properly isolated
       # Create another user
       other_user = user_fixture(%{email: "other@example.com"})
-      
+
       # Access campaign creation form as current user
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> get(~p"/campaigns/new")
 
       # Should show the form for current user (campaigns are created for the authenticated user)
       assert html_response(conn, 200) =~ "Create New Campaign"
-      
+
       # Verify the form doesn't contain any other user's data
       refute html_response(conn, 200) =~ other_user.email
     end
@@ -241,9 +260,9 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
     test "users cannot create campaigns for other users", %{conn: conn, user: user} do
       # Create another user
       other_user = user_fixture(%{email: "other@example.com"})
-      
+
       # Try to create a campaign with another user's ID
-      conn = 
+      conn =
         conn
         |> log_in_user(user)
         |> post(~p"/campaigns", %{campaign: %{name: "Test Campaign", user_id: other_user.id}})
@@ -251,7 +270,7 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
       # Should redirect to the created campaign (which will be for the authenticated user)
       assert redirected_to(conn) =~ "/campaigns/"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Campaign created successfully"
-      
+
       # Verify the campaign was created for the authenticated user, not the other user
       # (This is handled by the controller which overrides user_id)
     end
@@ -281,4 +300,4 @@ defmodule EmailCollectorWeb.CampaignControllerTest do
       "password" => "password123"
     })
   end
-end 
+end
