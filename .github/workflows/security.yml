@@ -1,0 +1,50 @@
+name: Security
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 2 * * 1'  # Weekly on Monday at 2 AM UTC
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Elixir
+      uses: erlef/setup-beam@v1
+      with:
+        elixir-version: '1.18.4'
+        otp-version: '26.2.2'
+
+    - name: Install dependencies
+      run: mix deps.get
+
+    - name: Run security audit
+      run: mix deps.audit
+      continue-on-error: true
+
+    - name: Run sobelow security scan
+      run: mix sobelow --config
+      continue-on-error: true
+
+    - name: Run credo code analysis
+      run: mix credo --strict
+      continue-on-error: true
+
+  dependency-review:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Dependency Review
+      uses: actions/dependency-review-action@v4
+      with:
+        fail-on-severity: moderate 

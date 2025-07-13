@@ -1,0 +1,105 @@
+<div class="container">
+  <header>
+    <h1>Create New Campaign</h1>
+    <p>Set up a new email collection campaign</p>
+  </header>
+
+  <section class="form-section">
+    <div class="form-card">
+      <.form :let={f} for={@changeset} action={~p"/campaigns"} method="post">
+        <div class="form-group">
+          <label for="campaign_name">Campaign Name</label>
+          <.input field={f[:name]} type="text" required placeholder="Enter campaign name" />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Create Campaign</button>
+          <a href={~p"/profile"} class="btn btn-secondary">Cancel</a>
+        </div>
+      </.form>
+    </div>
+  </section>
+</div>
+
+<style>
+  .form-section {
+    margin: 2rem 0;
+  }
+
+  .form-card {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-start;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+
+  .btn-primary {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #2563eb;
+  }
+
+  .btn-secondary {
+    background: #6b7280;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: #4b5563;
+  }
+
+  .error-message {
+    color: #ef4444;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+  }
+</style> 

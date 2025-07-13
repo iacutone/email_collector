@@ -1,0 +1,33 @@
+<.flash_group flash={@flash} />
+
+<header>
+  <h1>Welcome to FastCollect</h1>
+  <p>Your secure email collection platform</p>
+</header>
+
+<section>
+  <h2>Get Started</h2>
+  <p>
+    FastCollect helps you securely collect and manage email addresses. Whether you're building a newsletter, running a campaign, or need to gather contact information, we've got you covered.
+  </p>
+
+  <%= if @current_user do %>
+    <p>Welcome back! You're all set to start collecting emails.</p>
+  <% else %>
+    <p>Sign up or log in to start collecting emails today.</p>
+    <div class="auth-actions">
+      <a href={~p"/auth/login"} class="btn btn-primary">Login</a>
+      <a href={~p"/auth/new"} class="btn btn-secondary">Sign up</a>
+    </div>
+  <% end %>
+</section>
+
+<section>
+  <h2>Features</h2>
+  <ul>
+    <li>Secure email collection</li>
+    <li>User authentication</li>
+    <li>Clean, modern interface</li>
+    <li>Built with Phoenix Framework</li>
+  </ul>
+</section>

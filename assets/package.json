@@ -1,0 +1,14 @@
+{
+  "name": "assets",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "scripts": {
+    "build": "esbuild js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*",
+    "watch": "esbuild js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --watch"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    image: fastcollect:latest
+    environment:
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - PHX_SERVER=true
+      - DATABASE_PATH=/app/email_collector_prod.db
+      - PORT=4000
+    ports:
+      - "4000:4000"
+    volumes:
+      - email_collector_data:/app
+    restart: unless-stopped
+volumes:
+  email_collector_data: 

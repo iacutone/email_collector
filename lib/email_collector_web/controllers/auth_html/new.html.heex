@@ -1,0 +1,46 @@
+<div class="auth-container">
+  <div class="auth-form">
+    <h2>Create your account</h2>
+    <p>Join FastCollect today</p>
+
+    <.form :let={f} for={@changeset} action={~p"/auth"} method="post">
+      <div class="form-group">
+        <label for="user_email">Email address</label>
+        <.input field={f[:email]} type="email" required placeholder="Email address" />
+      </div>
+
+      <div class="form-group">
+        <label for="user_password">Password</label>
+        <.input field={f[:password]} type="password" required placeholder="Password" />
+      </div>
+
+      <div class="form-group">
+        <label for="user_password_confirmation">Confirm Password</label>
+        <.input
+          field={f[:password_confirmation]}
+          type="password"
+          required
+          placeholder="Confirm Password"
+        />
+      </div>
+
+      <button type="submit">Sign up</button>
+    </.form>
+
+    <div class="auth-links">
+      <a href={~p"/auth/login"}>Already have an account? Sign in</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .error-message {
+    margin-top: 0.25rem;
+  }
+
+  .error-text {
+    color: #dc2626;
+    font-size: 0.875rem;
+    margin: 0;
+  }
+</style>

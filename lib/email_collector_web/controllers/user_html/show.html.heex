@@ -1,0 +1,333 @@
+<div class="container">
+  <header>
+    <h1>Your Profile</h1>
+    <p>Welcome to your FastCollect dashboard</p>
+  </header>
+
+  <section class="profile-section">
+    <div class="profile-card">
+      <h2>Account Information</h2>
+
+      <div class="info-group">
+        <label>Email:</label>
+        <span class="value">{@user.email}</span>
+      </div>
+
+      <div class="info-group">
+        <label>API Key:</label>
+        <div class="api-key-container">
+          <code class="api-key">{@user.api_key}</code>
+          <button class="copy-btn" onclick="copyApiKey()">Copy</button>
+        </div>
+        <small class="help-text">Use this API key to authenticate your API requests</small>
+      </div>
+
+      <div class="info-group">
+        <label>Member Since:</label>
+        <span class="value">{Calendar.strftime(@user.inserted_at, "%B %d, %Y")}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="campaigns-section">
+    <div class="campaigns-header">
+      <h2>Your Campaigns</h2>
+      <a href={~p"/campaigns/new"} class="btn btn-primary">New Campaign</a>
+    </div>
+    <%= if Enum.empty?(@campaigns) do %>
+      <div class="empty-state">
+        <p>You haven't created any campaigns yet.</p>
+        <p>Start collecting emails by creating your first campaign!</p>
+      </div>
+    <% else %>
+      <div class="campaigns-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Campaign Name</th>
+              <th>Email Count</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <%= for campaign <- @campaigns do %>
+              <tr>
+                <td>
+                  <a href={~p"/campaigns/#{campaign.id}"} class="campaign-link">
+                    <%= campaign.name %>
+                  </a>
+                </td>
+                <td><%= campaign.email_count %></td>
+                <td><%= Calendar.strftime(campaign.inserted_at, "%B %d, %Y") %></td>
+                <td class="actions">
+                  <a href={~p"/campaigns/#{campaign.id}/edit"} class="btn btn-small btn-secondary">
+                    Edit
+                  </a>
+                  <a href={~p"/campaigns/#{campaign.id}/download"} class="btn btn-small btn-success">
+                    Download CSV
+                  </a>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </section>
+</div>
+
+<style>
+  .profile-section {
+    margin: 2rem 0;
+  }
+
+  .profile-card {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .info-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .info-group label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+  }
+
+  .info-group .value {
+    color: #1f2937;
+    font-size: 1.1rem;
+  }
+
+  .api-key-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .api-key {
+    background: #f3f4f6;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #1f2937;
+    flex: 1;
+    word-break: break-all;
+  }
+
+  .copy-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .copy-btn:hover {
+    background: #2563eb;
+  }
+
+  .help-text {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .actions-section {
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #2563eb;
+  }
+
+  .btn-secondary {
+    background: #6b7280;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: #4b5563;
+  }
+
+  .btn-success {
+    background: #10b981;
+    color: white;
+  }
+
+  .btn-success:hover {
+    background: #059669;
+  }
+
+  .campaigns-section {
+    margin: 2rem 0;
+  }
+
+  .campaigns-section h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #1f2937;
+  }
+
+  .campaigns-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .campaigns-header h2 {
+    margin-bottom: 0;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .empty-state p {
+    color: #6b7280;
+    margin: 0.5rem 0;
+  }
+
+  .campaigns-table {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .campaigns-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .campaigns-table th,
+  .campaigns-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .campaigns-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .campaigns-table tr:hover {
+    background: #f9fafb;
+  }
+
+  .campaign-link {
+    color: #3b82f6;
+    text-decoration: none;
+  }
+
+  .campaign-link:hover {
+    text-decoration: underline;
+  }
+
+  .actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+
+  .btn-small {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .btn-danger {
+    background: #ef4444;
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background: #dc2626;
+  }
+</style>
+
+<script>
+  function copyApiKey() {
+    const apiKey = document.querySelector('.api-key').textContent;
+    navigator.clipboard.writeText(apiKey).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      const originalText = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.style.background = '#10b981';
+      
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '#3b82f6';
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy API key:', err);
+      alert('Failed to copy API key. Please copy it manually.');
+    });
+  }
+
+  function deleteCampaign(campaignId, campaignName) {
+    if (confirm(`Are you sure you want to delete campaign "${campaignName}"? This action cannot be undone.`)) {
+      fetch(`/campaigns/${campaignId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert('Campaign deleted successfully!');
+          // Optionally, refresh the campaigns list
+          window.location.reload();
+        } else {
+          alert('Failed to delete campaign: ' + data.message);
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting campaign:', error);
+        alert('Failed to delete campaign. Please try again.');
+      });
+    }
+  }
+</script>
