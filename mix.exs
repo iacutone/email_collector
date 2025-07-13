@@ -49,7 +49,8 @@ defmodule EmailCollector.MixProject do
       {:bandit, "~> 1.5"},
       {:bcrypt_elixir, "~> 3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:nimble_csv, "~> 1.3"}
+      {:nimble_csv, "~> 1.3"},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
     ]
   end
 
@@ -70,7 +71,8 @@ defmodule EmailCollector.MixProject do
       "assets.deploy": [
         "esbuild email_collector --minify",
         "phx.digest"
-      ]
+      ],
+      dialyzer: "dialyzer"
     ]
   end
 end
