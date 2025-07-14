@@ -2,7 +2,7 @@ version: '3.8'
 services:
   web:
     build: .
-    image: fastcollect:latest
+    image: email_collector:latest
     environment:
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
       - PHX_SERVER=true
@@ -11,7 +11,8 @@ services:
     ports:
       - "4000:4000"
     volumes:
-      - email_collector_data:/app
+      - email_collector_data:/app/data  # Only mount data directory
     restart: unless-stopped
+
 volumes:
-  email_collector_data: 
+  email_collector_data:
