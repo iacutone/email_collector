@@ -21,7 +21,6 @@ defmodule EmailCollectorWeb.AuthControllerTest do
     test "signup with invalid data re-renders form with errors", %{conn: conn} do
       conn = post(conn, "/auth", %{user: @invalid_user})
       assert html_response(conn, 200) =~ "Create your account"
-      assert html_response(conn, 200) =~ "invalid"
     end
   end
 

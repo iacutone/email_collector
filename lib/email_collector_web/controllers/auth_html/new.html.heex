@@ -3,24 +3,34 @@
     <h2>Create your account</h2>
     <p>Join FastCollect today</p>
 
-    <.form :let={f} for={@changeset} action={~p"/auth"} method="post">
+    <.form for={@changeset} action={~p"/auth"} method="post">
       <div class="form-group">
         <label for="user_email">Email address</label>
-        <.input field={f[:email]} type="email" required placeholder="Email address" />
+        <input
+          type="email"
+          name="user[email]"
+          placeholder="Email address"
+          required
+        />
       </div>
 
       <div class="form-group">
         <label for="user_password">Password</label>
-        <.input field={f[:password]} type="password" required placeholder="Password" />
+        <input
+          type="password"
+          name="user[password]"
+          placeholder="Password"
+          required
+        />
       </div>
 
       <div class="form-group">
         <label for="user_password_confirmation">Confirm Password</label>
-        <.input
-          field={f[:password_confirmation]}
+        <input
           type="password"
-          required
+          name="user[password_confirmation]"
           placeholder="Confirm Password"
+          required
         />
       </div>
 

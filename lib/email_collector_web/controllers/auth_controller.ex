@@ -14,7 +14,7 @@ defmodule EmailCollectorWeb.AuthController do
       {:ok, user} ->
         conn
         |> put_session(:user_id, user.id)
-        |> put_flash(:info, "Account created successfully! Here's your API key: #{user.api_key}.")
+        |> put_flash(:info, "Account created successfully!")
         |> redirect(to: ~p"/profile")
 
       {:error, %Ecto.Changeset{} = changeset} ->

@@ -6,10 +6,15 @@
 
   <section class="form-section">
     <div class="form-card">
-      <.form :let={f} for={@changeset} action={~p"/campaigns"} method="post">
+      <.form for={@changeset} action={~p"/campaigns"} method="post">
         <div class="form-group">
           <label for="campaign_name">Campaign Name</label>
-          <.input field={f[:name]} type="text" required placeholder="Enter campaign name" />
+          <input
+            type="text"
+            name="campaign[name]"
+            placeholder="Enter campaign name"
+            required
+          />
         </div>
 
         <div class="form-actions">
