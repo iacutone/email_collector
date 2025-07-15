@@ -45,7 +45,6 @@ defmodule EmailCollector.MixProject do
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
-      {:gettext, "~> 0.26"},
       {:bandit, "~> 1.5"},
       {:bcrypt_elixir, "~> 3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},

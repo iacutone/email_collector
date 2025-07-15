@@ -53,7 +53,6 @@ config :email_collector, EmailCollectorWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
-      ~r"priv/gettext/.*(po)$",
       ~r"lib/email_collector_web/(controllers|live|components)/.*(ex|heex)$"
     ]
   ]

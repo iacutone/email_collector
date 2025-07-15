@@ -42,8 +42,6 @@ defmodule EmailCollectorWeb do
         formats: [:html, :json],
         layouts: [html: EmailCollectorWeb.Layouts]
 
-      use Gettext, backend: EmailCollectorWeb.Gettext
-
       import Plug.Conn
 
       unquote(verified_routes())
@@ -82,9 +80,6 @@ defmodule EmailCollectorWeb do
 
   defp html_helpers do
     quote do
-      # Translation
-      use Gettext, backend: EmailCollectorWeb.Gettext
-
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components
