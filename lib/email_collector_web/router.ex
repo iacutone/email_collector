@@ -41,6 +41,12 @@ defmodule EmailCollectorWeb.Router do
     get "/login", AuthController, :login
     post "/login", AuthController, :authenticate
     delete "/logout", AuthController, :logout
+
+    # Password reset
+    get "/forgot-password", AuthController, :forgot_password
+    post "/forgot-password", AuthController, :send_reset_link
+    get "/reset-password", AuthController, :reset_password
+    post "/reset-password", AuthController, :update_password
   end
 
   scope "/api/v1", EmailCollectorWeb.Api do

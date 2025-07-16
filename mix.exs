@@ -49,7 +49,9 @@ defmodule EmailCollector.MixProject do
       {:bcrypt_elixir, "~> 3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:nimble_csv, "~> 1.3"},
-      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:ex_aws, "~> 2.4"},
+      {:ex_aws_ses, "~> 2.4"}
     ]
   end
 

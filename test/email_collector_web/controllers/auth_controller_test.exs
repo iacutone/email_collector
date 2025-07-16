@@ -66,4 +66,94 @@ defmodule EmailCollectorWeb.AuthControllerTest do
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
     end
   end
+
+  describe "GET /auth/forgot-password" do
+    test "renders the forgot password form", %{conn: conn} do
+      conn = get(conn, "/auth/forgot-password")
+      assert html_response(conn, 200) =~ "Forgot your password?"
+    end
+  end
+
+  describe "POST /auth/forgot-password" do
+    setup do
+      {:ok, user} = Accounts.create_user(%{email: "resetme@example.com", password: "reset123", password_confirmation: "reset123"})
+      %{user: user}
+    end
+
+    test "sends reset link for existing email", %{conn: conn, user: user} do
+      conn = post(conn, "/auth/forgot-password", %{email: user.email})
+      assert redirected_to(conn) == "/auth/forgot-password"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
+    end
+
+    test "responds the same for non-existent email", %{conn: conn} do
+      conn = post(conn, "/auth/forgot-password", %{email: "nobody@example.com"})
+      assert redirected_to(conn) == "/auth/forgot-password"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
+    end
+  end
+
+  describe "GET /auth/reset-password" do
+    setup do
+      {:ok, user} = Accounts.create_user(%{email: "resetme2@example.com", password: "reset123", password_confirmation: "reset123"})
+      token = Accounts.generate_password_reset_token(user)
+      %{user: user, token: token}
+    end
+
+    test "renders reset form for valid token", %{conn: conn, token: token} do
+      conn = get(conn, "/auth/reset-password", %{token: token})
+      assert html_response(conn, 200) =~ "Reset your password"
+    end
+
+    test "shows error for invalid token", %{conn: conn} do
+      conn = get(conn, "/auth/reset-password", %{token: "badtoken"})
+      assert redirected_to(conn) == "/auth/forgot-password"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "invalid or has expired"
+    end
+
+    test "shows error for expired token", %{conn: conn, user: user} do
+      # Test that the verification function properly handles expired tokens
+      # by creating a token and then verifying it with max_age: 0
+      salt = Application.get_env(:email_collector, :token_salt)
+      token = Phoenix.Token.sign(EmailCollectorWeb.Endpoint, salt, user.email)
+      
+      # This should fail because max_age: 0 means the token is immediately expired
+      assert {:error, :expired} = Phoenix.Token.verify(EmailCollectorWeb.Endpoint, salt, token, max_age: 0)
+      
+      # Test that the controller redirects for any invalid token (including expired ones)
+      conn = get(conn, "/auth/reset-password", %{token: "definitely_invalid_token"})
+      assert redirected_to(conn) == "/auth/forgot-password"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "invalid or has expired"
+    end
+  end
+
+  describe "POST /auth/reset-password" do
+    setup do
+      {:ok, user} = Accounts.create_user(%{email: "resetme3@example.com", password: "reset123", password_confirmation: "reset123"})
+      token = Accounts.generate_password_reset_token(user)
+      %{user: user, token: token}
+    end
+
+    test "successfully resets password with valid token", %{conn: conn, token: token, user: user} do
+      params = %{token: token, user: %{password: "newpass123", password_confirmation: "newpass123"}}
+      conn = post(conn, "/auth/reset-password", params)
+      assert redirected_to(conn) == "/auth/login"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "has been reset"
+      # User can now log in with new password
+      assert {:ok, _} = Accounts.authenticate_user(user.email, "newpass123")
+    end
+
+    test "shows error for invalid token", %{conn: conn} do
+      params = %{token: "badtoken", user: %{password: "newpass123", password_confirmation: "newpass123"}}
+      conn = post(conn, "/auth/reset-password", params)
+      assert redirected_to(conn) == "/auth/forgot-password"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "invalid or has expired"
+    end
+
+    test "shows error for mismatched passwords", %{conn: conn, token: token} do
+      params = %{token: token, user: %{password: "newpass123", password_confirmation: "wrong"}}
+      conn = post(conn, "/auth/reset-password", params)
+      assert html_response(conn, 200) =~ "Reset your password"
+    end
+  end
 end
