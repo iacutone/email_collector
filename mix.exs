@@ -51,7 +51,8 @@ defmodule EmailCollector.MixProject do
       {:nimble_csv, "~> 1.3"},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_aws, "~> 2.4"},
-      {:ex_aws_ses, "~> 2.4"}
+      {:ex_aws_ses, "~> 2.4"},
+      {:mox, "~> 1.1", only: :test}
     ]
   end
 

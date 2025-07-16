@@ -1,39 +1,45 @@
 defmodule EmailCollector.MailerTest do
   use ExUnit.Case
+  import Mox
+
+  # Make sure mocks are verified when the test exits
+  setup :verify_on_exit!
 
   test "send_email/4 sends an email via AWS SES" do
-    # Use a real or sandboxed email address for testing
     to = "test@example.com"
     subject = "Test Email"
     html_body = "<h1>Hello from FastCollect</h1>"
     text_body = "Hello from FastCollect"
 
-    # This will actually attempt to send an email via AWS SES
-    result = EmailCollector.Mailer.send_email(to, subject, html_body, text_body)
+    # Mock the ExAws.request call
+    EmailCollector.ExAwsMock
+    |> expect(:request, fn _operation -> {:ok, %{message_id: "test-message-id"}} end)
 
-    # You can assert on the result structure, but ExAws returns {:ok, _} or {:error, _}
-    assert match?({:ok, _}, result) or match?({:error, _}, result)
+    result = EmailCollector.Mailer.send_email(to, subject, html_body, text_body)
+    assert {:ok, %{message_id: "test-message-id"}} = result
   end
 
   test "send_password_reset_email/2 sends a password reset email" do
     email = "test@example.com"
     reset_url = "http://localhost:4000/auth/reset-password?token=test-token"
 
-    result = EmailCollector.Mailer.send_password_reset_email(email, reset_url)
+    # Mock the ExAws.request call
+    EmailCollector.ExAwsMock
+    |> expect(:request, fn _operation -> {:ok, %{message_id: "test-message-id"}} end)
 
-    # Assert that the function returns a result (either success or error)
-    assert match?({:ok, _}, result) or match?({:error, _}, result)
+    result = EmailCollector.Mailer.send_password_reset_email(email, reset_url)
+    assert {:ok, %{message_id: "test-message-id"}} = result
   end
 
   test "send_password_reset_email/2 generates proper email content" do
     email = "test@example.com"
     reset_url = "http://localhost:4000/auth/reset-password?token=test-token"
 
-    # Test that the function can be called without errors
-    # In a real test environment, you might want to mock the AWS SES call
+    # Mock the ExAws.request call
+    EmailCollector.ExAwsMock
+    |> expect(:request, fn _operation -> {:ok, %{message_id: "test-message-id"}} end)
+
     result = EmailCollector.Mailer.send_password_reset_email(email, reset_url)
-    
-    # The result should be either {:ok, response} or {:error, reason}
-    assert match?({:ok, _}, result) or match?({:error, _}, result)
+    assert {:ok, %{message_id: "test-message-id"}} = result
   end
 end 

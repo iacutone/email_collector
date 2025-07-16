@@ -16,7 +16,12 @@ defmodule EmailCollector.Mailer do
       message,
       @from
     )
-    |> ExAws.request()
+    |> request()
+  end
+
+  defp request(operation) do
+    ex_aws_client = Application.get_env(:email_collector, :ex_aws_client, ExAws)
+    ex_aws_client.request(operation)
   end
 
   def send_password_reset_email(email, reset_url) do

@@ -1,6 +1,9 @@
 defmodule EmailCollectorWeb.AuthControllerTest do
   use EmailCollectorWeb.ConnCase
 
+  import Mox
+  setup :verify_on_exit!
+
   alias EmailCollector.Accounts
 
   @valid_user %{
@@ -81,6 +84,9 @@ defmodule EmailCollectorWeb.AuthControllerTest do
     end
 
     test "sends reset link for existing email", %{conn: conn, user: user} do
+      EmailCollector.ExAwsMock
+      |> expect(:request, fn _operation -> {:ok, %{message_id: "test-message-id"}} end)
+
       conn = post(conn, "/auth/forgot-password", %{email: user.email})
       assert redirected_to(conn) == "/auth/forgot-password"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"

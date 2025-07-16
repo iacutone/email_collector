@@ -7,8 +7,6 @@ defmodule EmailCollector.Accounts do
   alias EmailCollector.Repo
   alias EmailCollector.Accounts.User
 
-  @token_salt Application.compile_env(:email_collector, :token_salt)
-
   @doc """
   Returns the list of users.
   """
@@ -87,12 +85,14 @@ defmodule EmailCollector.Accounts do
   end
 
   def generate_password_reset_token(%User{email: email}) do
-    Phoenix.Token.sign(EmailCollectorWeb.Endpoint, @token_salt, email)
+    salt = Application.get_env(:email_collector, :token_salt)
+    Phoenix.Token.sign(EmailCollectorWeb.Endpoint, salt, email)
   end
 
   def verify_password_reset_token(token) do
+    salt = Application.get_env(:email_collector, :token_salt)
     max_age = 3600 # 1 hour
-    case Phoenix.Token.verify(EmailCollectorWeb.Endpoint, @token_salt, token, max_age: max_age) do
+    case Phoenix.Token.verify(EmailCollectorWeb.Endpoint, salt, token, max_age: max_age) do
       {:ok, email} ->
         case get_user_by_email(email) do
           nil -> {:error, :not_found}
