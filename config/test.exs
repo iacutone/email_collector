@@ -30,3 +30,5 @@ config :phoenix_live_view,
 # Configure mox for mocking ExAws in tests
 config :email_collector,
   ex_aws_client: EmailCollector.ExAwsMock
+
+config :email_collector, :token_salt, "super_secret_password_reset_salt_2024"
