@@ -5,25 +5,27 @@ defmodule EmailCollector.Mailer do
 
   @from "noreply@fastcollect.com"
 
+  @spec send_email(String.t(), String.t(), String.t(), String.t()) :: {:ok, map()} | {:error, any()}
   def send_email(to, subject, html_body, text_body) do
+    ex_aws_client = Application.get_env(:email_collector, :ex_aws_client, ExAws)
+
     message = %{
-      subject: subject,
-      body: %{html: html_body, text: text_body}
+      subject: %{data: subject, charset: "UTF-8"},
+      body: %{
+        html: %{data: html_body, charset: "UTF-8"},
+        text: %{data: text_body, charset: "UTF-8"}
+      }
     }
 
     ExAws.SES.send_email(
-      %{to: [to]},
+      %{to: [to], cc: [], bcc: []},
       message,
       @from
     )
-    |> request()
+    |> ex_aws_client.request()
   end
 
-  defp request(operation) do
-    ex_aws_client = Application.get_env(:email_collector, :ex_aws_client, ExAws)
-    ex_aws_client.request(operation)
-  end
-
+  @spec send_password_reset_email(String.t(), String.t()) :: {:ok, map()} | {:error, any()}
   def send_password_reset_email(email, reset_url) do
     subject = "Password Reset Request - FastCollect"
 
@@ -31,27 +33,27 @@ defmodule EmailCollector.Mailer do
     <!DOCTYPE html>
     <html>
     <head>
-      <meta charset="utf-8">
+      <meta charset=\"utf-8\">
       <title>Password Reset</title>
     </head>
-    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-      <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h1 style="color: #2563eb;">FastCollect</h1>
+    <body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">
+      <div style=\"max-width: 600px; margin: 0 auto; padding: 20px;\">
+        <h1 style=\"color: #2563eb;\">FastCollect</h1>
         <h2>Password Reset Request</h2>
         <p>You requested a password reset for your FastCollect account.</p>
         <p>Click the button below to reset your password:</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="#{reset_url}" 
-             style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+        <div style=\"text-align: center; margin: 30px 0;\">
+          <a href=\"#{reset_url}\" 
+             style=\"background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;\">
             Reset Password
           </a>
         </div>
         <p>If you didn't request this password reset, you can safely ignore this email.</p>
         <p>This link will expire in 1 hour.</p>
-        <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
-        <p style="font-size: 12px; color: #6b7280;">
+        <hr style=\"margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;\">
+        <p style=\"font-size: 12px; color: #6b7280;\">
           If the button doesn't work, copy and paste this link into your browser:<br>
-          <a href="#{reset_url}" style="color: #2563eb;">#{reset_url}</a>
+          <a href=\"#{reset_url}\" style=\"color: #2563eb;\">#{reset_url}</a>
         </p>
       </div>
     </body>
