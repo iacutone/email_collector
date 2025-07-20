@@ -37,13 +37,14 @@ RUN apt-get update && apt-get install -y libssl-dev openssl && rm -rf /var/lib/a
 WORKDIR /app
 
 ENV LANG=C.UTF-8
-ENV DATABASE_PATH=/app/data/email_collector_prod.db  # Point to data directory
+ENV DATABASE_PATH=/app/data/email_collector_prod.db
 
 COPY --from=build /app/_build/prod/rel/email_collector ./
 COPY --from=build /app/priv/static ./priv/static
 
 RUN mkdir -p /app/data  # Create data directory
 
-VOLUME ["/app/data"]  # Only the data directory is a volume
+VOLUME ["/app/data"]
 EXPOSE 4000
+
 CMD ["bin/email_collector", "start"]
