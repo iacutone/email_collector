@@ -2,14 +2,24 @@ FROM hexpm/elixir:1.18.4-erlang-28.0.1-debian-bookworm-20250630-slim AS build
 
 # Install build dependencies
 RUN apt-get update -y && \
-    apt-get install -y build-essential npm
+    apt-get install -y build-essential npm git ca-certificates locales && \
+    locale-gen en_US.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set locale environment
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US:en
+ENV LC_ALL=en_US.UTF-8
 
 # Set environment
 ENV MIX_ENV=prod
 WORKDIR /app
 
+USER root
+
 # Install Hex + Rebar
-RUN mix local.hex --force && mix local.rebar --force
+RUN mix local.hex --force --if-missing
+RUN mix local.rebar --force --if-missing
 
 # Copy mix files and install deps
 COPY mix.exs mix.lock ./
