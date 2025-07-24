@@ -1,6 +1,7 @@
 defmodule EmailCollector.Release do
   @moduledoc """
-  Tasks for releases
+  Used for executing DB release tasks when run in production without Mix
+  installed.
   """
   @app :email_collector
 
