@@ -28,7 +28,7 @@ builder:
 
 # Persistent volumes for SQLite database
 volumes:
-  - "/data:/app/data"
+  - "data:/app/data"
 
 aliases:
   console: app exec --interactive --reuse "/app/bin/email_collector remote"
