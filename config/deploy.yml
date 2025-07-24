@@ -12,7 +12,11 @@ registry:
 
 proxy:
   ssl: true
-  host: email.email-collection.com
+  app_port: 4000
+  host: email.collection.email
+
+  healthcheck:
+    path: /
 
 # Environment variables
 env:
