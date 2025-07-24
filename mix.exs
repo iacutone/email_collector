@@ -52,7 +52,8 @@ defmodule EmailCollector.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ex_aws, "~> 2.4"},
       {:ex_aws_ses, "~> 2.4"},
-      {:mox, "~> 1.1", only: :test}
+      {:mox, "~> 1.1", only: :test},
+      {:cors_plug, "~> 3.0"}
     ]
   end
 

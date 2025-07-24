@@ -16,6 +16,10 @@ defmodule EmailCollectorWeb.Router do
     plug EmailCollectorWeb.Plugs.ApiAuthPlug
   end
 
+  pipeline :cors do
+    plug CORSPlug, origin: ["*"]
+  end
+
   scope "/", EmailCollectorWeb do
     pipe_through :browser
 
@@ -51,6 +55,7 @@ defmodule EmailCollectorWeb.Router do
 
   scope "/api/v1", EmailCollectorWeb.Api do
     # POST does NOT require authentication
+    pipe_through :cors
     post "/emails/:campaign_id", EmailController, :create
 
     # GET requires authentication
