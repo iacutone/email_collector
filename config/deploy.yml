@@ -1,0 +1,36 @@
+service: email-collector
+image: iacutone/email_collector
+
+servers:
+  web:
+    - "5.161.60.147"
+
+registry:
+  username: iacutone
+  password:
+    - DOCKER_REGISTRY_PASSWORD
+
+proxy:
+  ssl: true
+  host: email.email-collection.com
+
+# Environment variables
+env:
+  clear:
+    PHX_SERVER: true
+    PORT: 4000
+  secret:
+    - SECRET_KEY_BASE
+    - DATABASE_PATH
+
+builder:
+  arch: amd64
+
+# Persistent volumes for SQLite database
+volumes:
+  - "/data:/app/data"
+
+aliases:
+  console: app exec --interactive --reuse "/app/bin/email_collector remote"
+  shell: app exec --interactive --reuse "/bin/sh"
+  logs: app logs -f
