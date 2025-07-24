@@ -80,17 +80,16 @@ ENV LANGUAGE en_US:en
 ENV LC_ALL en_US.UTF-8
 
 WORKDIR "/app"
-RUN chown nobody /app
+RUN chown root /app
 
 # set runner ENV
 ENV MIX_ENV="prod"
 ENV DATABASE_PATH=/app/data/email_collector_prod.db
 
 # Only copy the final release from the build stage
-COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/email_collector ./
+COPY --from=builder --chown=root:root /app/_build/${MIX_ENV}/rel/email_collector ./
 
-USER nobody
-
+USER root
 
 VOLUME ["/app/data"]
 EXPOSE 4000
