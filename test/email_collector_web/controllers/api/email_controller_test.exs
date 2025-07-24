@@ -22,12 +22,10 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
   def auth_conn(conn, api_key), do: put_req_header(conn, "authorization", "Bearer #{api_key}")
 
   describe "POST /api/v1/emails/:campaign_id" do
-    test "creates email with valid api_key and campaign", %{
+    test "creates email without authentication", %{
       conn: conn,
-      user: user,
       campaign: campaign
     } do
-      conn = conn |> auth_conn(user.api_key)
       resp = post(conn, "/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
       assert resp.status == 201
       resp_body = json_response(resp, 201)
@@ -36,13 +34,7 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
       assert resp_body["campaign_id"] == campaign.id
     end
 
-    test "returns 401 for invalid api_key", %{conn: conn, campaign: campaign} do
-      conn = conn |> auth_conn("badkey")
-      resp = post(conn, "/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
-      assert resp.status == 401
-    end
-
-    test "returns 403 for campaign not owned by user", %{conn: conn, user: user} do
+    test "creates email for any campaign (no ownership check)", %{conn: conn} do
       {:ok, other_user} =
         Accounts.create_user(%{
           email: "other@example.com",
@@ -51,13 +43,15 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
         })
 
       {:ok, other_campaign} = Campaigns.create_campaign(%{name: "Other", user_id: other_user.id})
-      conn = conn |> auth_conn(user.api_key)
       resp = post(conn, "/api/v1/emails/#{other_campaign.id}", %{email: @valid_email_params})
-      assert resp.status == 403
+      assert resp.status == 201
+      resp_body = json_response(resp, 201)
+      assert resp_body["id"]
+      assert resp_body["name"] == "Recipient"
+      assert resp_body["campaign_id"] == other_campaign.id
     end
 
-    test "returns 404 for non-existent campaign", %{conn: conn, user: user} do
-      conn = conn |> auth_conn(user.api_key)
+    test "returns 404 for non-existent campaign", %{conn: conn} do
       resp = post(conn, "/api/v1/emails/999999", %{email: @valid_email_params})
       assert resp.status == 404
     end

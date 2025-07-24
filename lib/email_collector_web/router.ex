@@ -50,9 +50,11 @@ defmodule EmailCollectorWeb.Router do
   end
 
   scope "/api/v1", EmailCollectorWeb.Api do
-    pipe_through :api
-
+    # POST does NOT require authentication
     post "/emails/:campaign_id", EmailController, :create
+
+    # GET requires authentication
+    pipe_through :api
     get "/emails/:campaign_id", EmailController, :index
   end
 
