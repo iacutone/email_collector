@@ -3,20 +3,14 @@ name: Deploy
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   test:
-    # Your existing test job
     runs-on: ubuntu-latest
-    # ...
-
-  lint:
-    # Your existing lint job
-    runs-on: ubuntu-latest
-    # ...
 
   deploy:
-    needs: [test, lint]
+    needs: [ci]
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     timeout-minutes: 20
