@@ -12,7 +12,7 @@
 #   - Ex: hexpm/elixir:1.18.4-erlang-28.0.1-debian-bullseye-20250630-slim
 #
 ARG ELIXIR_VERSION=1.18.4
-ARG OTP_VERSION=28.0.1
+ARG OTP_VERSION=27.0.1
 ARG DEBIAN_VERSION=bullseye-20250630-slim
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
@@ -33,6 +33,7 @@ RUN mix local.hex --force && \
 
 # set build ENV
 ENV MIX_ENV="prod"
+ENV ERL_FLAGS="+JPperf true"
 
 # install mix dependencies
 COPY mix.exs mix.lock ./
