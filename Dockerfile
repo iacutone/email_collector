@@ -84,15 +84,15 @@ RUN chown nobody /app
 
 # set runner ENV
 ENV MIX_ENV="prod"
+ENV DATABASE_PATH=/app/data/email_collector_prod.db
 
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/email_collector ./
 
 USER nobody
 
-# If using an environment that doesn't automatically reap zombie processes, it is
-# advised to add an init process such as tini via `apt-get install`
-# above and adding an entrypoint. See https://github.com/krallin/tini for details
-# ENTRYPOINT ["/tini", "--"]
 
-CMD ["/app/bin/server"]
+VOLUME ["/app/data"]
+EXPOSE 4000
+
+CMD ["bin/email_collector", "start"]
