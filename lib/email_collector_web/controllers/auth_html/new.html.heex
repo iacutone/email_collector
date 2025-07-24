@@ -1,7 +1,7 @@
 <div class="auth-container">
   <div class="auth-form">
     <h2>Create your account</h2>
-    <p>Join FastCollect today</p>
+    <p>Join Email Collection today</p>
 
     <.form :let={f} for={@changeset} action={~p"/auth"} method="post">
       <.input field={f[:email]} type="email" label="Email address" placeholder="Email address" required />

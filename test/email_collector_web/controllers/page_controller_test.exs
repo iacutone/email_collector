@@ -3,6 +3,6 @@ defmodule EmailCollectorWeb.PageControllerTest do
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")
-    assert html_response(conn, 200) =~ "Welcome to FastCollect"
+    assert html_response(conn, 200) =~ "Welcome to Email Collection"
   end
 end
