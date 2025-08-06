@@ -12,5 +12,6 @@ defmodule EmailCollector.Repo.Migrations.CreateEmails do
 
     create index(:emails, [:user_id])
     create index(:emails, [:campaign_id])
+    create unique_index(:emails, [:campaign_id, :name])
   end
 end

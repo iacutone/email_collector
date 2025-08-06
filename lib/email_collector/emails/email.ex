@@ -14,9 +14,12 @@ defmodule EmailCollector.Emails.Email do
     email
     |> cast(attrs, [:name, :user_id, :campaign_id])
     |> validate_required([:name, :user_id, :campaign_id])
-    |> foreign_key_constraint(:user_id)
-    |> foreign_key_constraint(:campaign_id)
     |> validate_email(:name)
+    |> unique_constraint([:campaign_id, :name],
+      message: "An email with this name already exists in this campaign"
+    )
+  end
+
   defp validate_email(changeset, field) do
     validate_change(changeset, field, fn field, value ->
       case EmailAddress.parse(value) do
