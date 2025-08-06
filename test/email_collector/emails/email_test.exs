@@ -15,11 +15,12 @@ defmodule EmailCollector.Emails.EmailTest do
       ]
 
       for email <- valid_emails do
-        changeset = Email.changeset(%Email{}, %{
-          name: email,
-          user_id: 1,
-          campaign_id: 1
-        })
+        changeset =
+          Email.changeset(%Email{}, %{
+            name: email,
+            user_id: 1,
+            campaign_id: Ecto.UUID.generate()
+          })
 
         assert changeset.valid?
         assert changeset.errors == []
@@ -27,22 +28,24 @@ defmodule EmailCollector.Emails.EmailTest do
     end
 
     test "rejects invalid email addresses" do
-      changeset = Email.changeset(%Email{}, %{
-        name: "not-an-email",
-        user_id: 1,
-        campaign_id: 1
-      })
+      changeset =
+        Email.changeset(%Email{}, %{
+          name: "not-an-email",
+          user_id: 1,
+          campaign_id: Ecto.UUID.generate()
+        })
 
       refute changeset.valid?
       assert "must be a valid email address" in errors_on(changeset).name
     end
 
     test "rejects email addresses with invalid characters" do
-      changeset = Email.changeset(%Email{}, %{
-        name: "user<@example.com",
-        user_id: 1,
-        campaign_id: 1
-      })
+      changeset =
+        Email.changeset(%Email{}, %{
+          name: "user<@example.com",
+          user_id: 1,
+          campaign_id: Ecto.UUID.generate()
+        })
 
       refute changeset.valid?
       assert "must be a valid email address" in errors_on(changeset).name
@@ -69,11 +72,12 @@ defmodule EmailCollector.Emails.EmailTest do
       ]
 
       for email <- valid_emails do
-        changeset = Email.changeset(%Email{}, %{
-          name: email,
-          user_id: 1,
-          campaign_id: 1
-        })
+        changeset =
+          Email.changeset(%Email{}, %{
+            name: email,
+            user_id: 1,
+            campaign_id: Ecto.UUID.generate()
+          })
 
         assert changeset.valid?
         assert changeset.errors == []
@@ -82,18 +86,20 @@ defmodule EmailCollector.Emails.EmailTest do
 
     test "accepts internationalized email addresses" do
       valid_emails = [
-        "user@xn--example-6ja.com",  # IDN domain
+        # IDN domain
+        "user@xn--example-6ja.com",
         "user@example.co.jp",
         "user@example.de",
         "user@example.fr"
       ]
 
       for email <- valid_emails do
-        changeset = Email.changeset(%Email{}, %{
-          name: email,
-          user_id: 1,
-          campaign_id: 1
-        })
+        changeset =
+          Email.changeset(%Email{}, %{
+            name: email,
+            user_id: 1,
+            campaign_id: Ecto.UUID.generate()
+          })
 
         assert changeset.valid?
         assert changeset.errors == []
@@ -103,30 +109,33 @@ defmodule EmailCollector.Emails.EmailTest do
 
   describe "required fields" do
     test "requires name field" do
-      changeset = Email.changeset(%Email{}, %{
-        user_id: 1,
-        campaign_id: 1
-      })
+      changeset =
+        Email.changeset(%Email{}, %{
+          user_id: 1,
+          campaign_id: Ecto.UUID.generate()
+        })
 
       refute changeset.valid?
       assert "can't be blank" in errors_on(changeset).name
     end
 
     test "requires user_id field" do
-      changeset = Email.changeset(%Email{}, %{
-        name: "test@example.com",
-        campaign_id: 1
-      })
+      changeset =
+        Email.changeset(%Email{}, %{
+          name: "test@example.com",
+          campaign_id: Ecto.UUID.generate()
+        })
 
       refute changeset.valid?
       assert "can't be blank" in errors_on(changeset).user_id
     end
 
     test "requires campaign_id field" do
-      changeset = Email.changeset(%Email{}, %{
-        name: "test@example.com",
-        user_id: 1
-      })
+      changeset =
+        Email.changeset(%Email{}, %{
+          name: "test@example.com",
+          user_id: 1
+        })
 
       refute changeset.valid?
       assert "can't be blank" in errors_on(changeset).campaign_id

@@ -5,7 +5,7 @@ defmodule EmailCollector.Emails.Email do
   schema "emails" do
     field :name, :string
     belongs_to :user, EmailCollector.Accounts.User
-    belongs_to :campaign, EmailCollector.Campaigns.Campaign
+    belongs_to :campaign, EmailCollector.Campaigns.Campaign, type: :binary_id
 
     timestamps()
   end
