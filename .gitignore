@@ -40,3 +40,4 @@ npm-debug.log
 *.db-*
 
 .kamal/secrets
+.cursor/mcp.json
