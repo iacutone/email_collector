@@ -5,7 +5,7 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
   alias EmailCollector.Campaigns
   alias EmailCollector.Emails
 
-  @valid_email_params %{name: "Recipient"}
+  @valid_email_params %{name: "test@example.com"}
 
   setup do
     {:ok, user} =
@@ -30,7 +30,7 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
       assert resp.status == 201
       resp_body = json_response(resp, 201)
       assert resp_body["id"]
-      assert resp_body["name"] == "Recipient"
+      assert resp_body["name"] == "test@example.com"
       assert resp_body["campaign_id"] == campaign.id
     end
 
@@ -47,7 +47,7 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
       assert resp.status == 201
       resp_body = json_response(resp, 201)
       assert resp_body["id"]
-      assert resp_body["name"] == "Recipient"
+      assert resp_body["name"] == "test@example.com"
       assert resp_body["campaign_id"] == other_campaign.id
     end
 
@@ -55,15 +55,23 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
       resp = post(conn, "/api/v1/emails/999999", %{email: @valid_email_params})
       assert resp.status == 404
     end
+
+    test "rejects invalid email addresses", %{conn: conn, campaign: campaign} do
+      resp = post(conn, "/api/v1/emails/#{campaign.id}", %{email: %{name: "invalid-email"}})
+      assert resp.status == 422
+      resp_body = json_response(resp, 422)
+      assert resp_body["error"] == "Invalid email data"
+      assert resp_body["details"]["name"] == ["must be a valid email address"]
+    end
   end
 
   describe "GET /api/v1/emails/:campaign_id" do
     test "lists emails for campaign", %{conn: conn, user: user, campaign: campaign} do
       {:ok, email1} =
-        Emails.create_email(%{name: "A", user_id: user.id, campaign_id: campaign.id})
+        Emails.create_email(%{name: "user1@example.com", user_id: user.id, campaign_id: campaign.id})
 
       {:ok, email2} =
-        Emails.create_email(%{name: "B", user_id: user.id, campaign_id: campaign.id})
+        Emails.create_email(%{name: "user2@example.com", user_id: user.id, campaign_id: campaign.id})
 
       conn = conn |> auth_conn(user.api_key)
       resp = get(conn, "/api/v1/emails/#{campaign.id}")

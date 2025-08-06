@@ -16,5 +16,13 @@ defmodule EmailCollector.Emails.Email do
     |> validate_required([:name, :user_id, :campaign_id])
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:campaign_id)
+    |> validate_email(:name)
+  defp validate_email(changeset, field) do
+    validate_change(changeset, field, fn field, value ->
+      case EmailAddress.parse(value) do
+        nil -> [{field, "must be a valid email address"}]
+        _ -> []
+      end
+    end)
   end
 end

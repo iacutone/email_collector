@@ -26,7 +26,7 @@ defmodule EmailCollector.Fixtures do
 
   def email_fixture(user, campaign, attrs \\ %{}) do
     default_attrs = %{
-      name: "Email #{System.unique_integer()}",
+      name: "email_#{System.unique_integer()}@example.com",
       user_id: user.id,
       campaign_id: campaign.id
     }

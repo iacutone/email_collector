@@ -53,7 +53,8 @@ defmodule EmailCollector.MixProject do
       {:ex_aws, "~> 2.4"},
       {:ex_aws_ses, "~> 2.4"},
       {:mox, "~> 1.1", only: :test},
-      {:cors_plug, "~> 3.0"}
+      {:cors_plug, "~> 3.0"},
+      {:email_address, "~> 1.0"}
     ]
   end
 
