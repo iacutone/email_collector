@@ -75,3 +75,6 @@ config :phoenix_live_view,
   debug_heex_annotations: true,
   # Enable helpful, but potentially expensive runtime checks
   enable_expensive_runtime_checks: true
+
+# Use the local mailbox in dev to preview emails at /dev/mailbox
+config :email_collector, EmailCollector.Mailer, adapter: Swoosh.Adapters.Local

@@ -49,6 +49,7 @@ defmodule EmailCollector.MixProject do
       {:bcrypt_elixir, "~> 3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:swoosh, "~> 1.19"},
       {:ex_aws, "~> 2.4"},
       {:ex_aws_ses, "~> 2.4"},
       {:mox, "~> 1.1", only: :test},

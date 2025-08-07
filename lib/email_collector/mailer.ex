@@ -1,33 +1,26 @@
 defmodule EmailCollector.Mailer do
-  @moduledoc """
-  Custom mailer using AWS SES for sending emails.
-  """
+  @moduledoc "Mailer delivering emails via Swoosh."
+
+  use Swoosh.Mailer, otp_app: :email_collector
 
   @from "noreply@fastcollect.com"
 
-  @spec send_email(String.t(), String.t(), String.t(), String.t()) :: {:ok, map()} | {:error, any()}
+  @spec send_email(String.t(), String.t(), String.t(), String.t()) :: {:ok, term()} | {:error, term()}
   def send_email(to, subject, html_body, text_body) do
-    ex_aws_client = Application.get_env(:email_collector, :ex_aws_client, ExAws)
+    email =
+      new_email()
+      |> Swoosh.Email.to(to)
+      |> Swoosh.Email.from(@from)
+      |> Swoosh.Email.subject(subject)
+      |> Swoosh.Email.html_body(html_body)
+      |> Swoosh.Email.text_body(text_body)
 
-    message = %{
-      subject: %{data: subject, charset: "UTF-8"},
-      body: %{
-        html: %{data: html_body, charset: "UTF-8"},
-        text: %{data: text_body, charset: "UTF-8"}
-      }
-    }
-
-    ExAws.SES.send_email(
-      %{to: [to], cc: [], bcc: []},
-      message,
-      @from
-    )
-    |> ex_aws_client.request()
+    deliver(email)
   end
 
-  @spec send_password_reset_email(String.t(), String.t()) :: {:ok, map()} | {:error, any()}
+  @spec send_password_reset_email(String.t(), String.t()) :: {:ok, term()} | {:error, term()}
   def send_password_reset_email(email, reset_url) do
-    subject = "Password Reset Request - FastCollect"
+    subject = "Password Reset Request - Email Collection"
 
     html_body = """
     <!DOCTYPE html>
@@ -38,12 +31,12 @@ defmodule EmailCollector.Mailer do
     </head>
     <body style=\"font-family: Arial, sans-serif; line-height: 1.6; color: #333;\">
       <div style=\"max-width: 600px; margin: 0 auto; padding: 20px;\">
-        <h1 style=\"color: #2563eb;\">FastCollect</h1>
+        <h1 style=\"color: #2563eb;\">Email Collection</h1>
         <h2>Password Reset Request</h2>
-        <p>You requested a password reset for your FastCollect account.</p>
+        <p>You requested a password reset for your Email Collection account.</p>
         <p>Click the button below to reset your password:</p>
         <div style=\"text-align: center; margin: 30px 0;\">
-          <a href=\"#{reset_url}\" 
+          <a href=\"#{reset_url}\"
              style=\"background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;\">
             Reset Password
           </a>
@@ -61,9 +54,9 @@ defmodule EmailCollector.Mailer do
     """
 
     text_body = """
-    Password Reset Request - FastCollect
+    Password Reset Request - Email Collection
 
-    You requested a password reset for your FastCollect account.
+    You requested a password reset for your Email Collection account.
 
     Click the link below to reset your password:
     #{reset_url}
@@ -74,4 +67,6 @@ defmodule EmailCollector.Mailer do
 
     send_email(email, subject, html_body, text_body)
   end
-end 
+
+  defp new_email, do: Swoosh.Email.new()
+end

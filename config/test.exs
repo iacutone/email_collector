@@ -27,8 +27,7 @@ config :phoenix, :plug_init_mode, :runtime
 config :phoenix_live_view,
   enable_expensive_runtime_checks: true
 
-# Configure mox for mocking ExAws in tests
-config :email_collector,
-  ex_aws_client: EmailCollector.ExAwsMock
+config :email_collector, EmailCollector.Mailer, adapter: Swoosh.Adapters.Test
+config :swoosh, :api_client, false
 
 config :email_collector, :token_salt, "super_secret_password_reset_salt_2024"
