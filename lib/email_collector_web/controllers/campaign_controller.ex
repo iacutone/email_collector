@@ -4,8 +4,7 @@ defmodule EmailCollectorWeb.CampaignController do
   alias EmailCollector.Campaigns
   alias EmailCollector.Emails
 
-  # Define CSV dumper for email data
-  NimbleCSV.define(CampaignEmailCSV, separator: ",", escape: "\"")
+  # CSV exporting implemented without external dependencies
 
   def new(conn, _params) do
     user = conn.assigns.current_user
@@ -184,12 +183,23 @@ defmodule EmailCollectorWeb.CampaignController do
         ]
       end)
 
-    [headers | rows]
-    |> CampaignEmailCSV.dump_to_iodata()
-    |> IO.iodata_to_binary()
+    ([headers] ++ rows)
+    |> Enum.map(fn row -> row |> Enum.map(&csv_escape/1) |> Enum.join(",") end)
+    |> Enum.join("\n")
   end
 
   defp format_datetime(datetime) do
     Calendar.strftime(datetime, "%Y-%m-%d %H:%M:%S")
+  end
+
+  defp csv_escape(nil), do: ""
+  defp csv_escape(value) when is_binary(value) do
+    escaped = String.replace(value, "\"", "\"\"")
+    "\"" <> escaped <> "\""
+  end
+  defp csv_escape(value) do
+    value
+    |> to_string()
+    |> csv_escape()
   end
 end

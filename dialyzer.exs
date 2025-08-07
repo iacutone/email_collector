@@ -11,7 +11,7 @@ defmodule Dialyzer.Config do
         :ecto_sql,
         :ecto_sqlite3,
         :bcrypt_elixir,
-        :nimble_csv
+        # :nimble_csv removed
       ],
       plt_file: {:no_warn, "priv/plts/dialyzer.plt"},
       ignore_warnings: ".dialyzer_ignore.exs",
