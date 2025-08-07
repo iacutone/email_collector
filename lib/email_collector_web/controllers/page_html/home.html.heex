@@ -1,20 +1,17 @@
 <.flash_group flash={@flash} />
 
 <header>
-  <h1>Welcome to Email Collection</h1>
-  <p>Your secure email collection platform</p>
+  <h1>Email Collection, Zero Bloat</h1>
+  <p>The developer-first email collection service that doesn't tank your Lighthouse scores.</p>
 </header>
 
 <section>
   <h2>Get Started</h2>
-  <p>
-    Email Collection helps you securely collect and manage email addresses. Whether you're building a newsletter, running a campaign, or need to gather contact information, we've got you covered.
-  </p>
+  <p>Two simple endpoints. No third-party JS. Maximum performance.</p>
 
   <%= if @current_user do %>
     <p>Welcome back! You're all set to start collecting emails.</p>
   <% else %>
-    <p>Sign up or log in to start collecting emails today.</p>
     <div class="auth-actions">
       <a href={~p"/auth/login"} class="btn btn-primary">Login</a>
       <a href={~p"/auth/new"} class="btn btn-secondary">Sign up</a>
@@ -23,11 +20,6 @@
 </section>
 
 <section>
-  <h2>Features</h2>
-  <ul>
-    <li>Secure email collection</li>
-    <li>User authentication</li>
-    <li>Clean, modern interface</li>
-    <li>Built with Phoenix Framework</li>
-  </ul>
+  <h2>Simple, Clean API</h2>
+  <pre><code><%= Phoenix.HTML.raw(~s(curl -X POST \\\n+  https://email.collection.email/api/v1/emails/2 \\\n+  -H "Content-Type: application/json" \\\n+  -d '{\"email\": {\"name\": \"example@email.com\"}}')) %></code></pre>
 </section>
