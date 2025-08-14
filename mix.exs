@@ -33,7 +33,7 @@ defmodule EmailCollector.MixProject do
   defp deps do
     [
       {:tidewave, "~> 0.1", only: :dev},
-      {:phoenix, "~> 1.7.21"},
+      {:phoenix, "~> 1.8.0"},
       {:phoenix_ecto, "~> 4.5"},
       {:ecto_sql, "~> 3.10"},
       {:ecto_sqlite3, ">= 0.0.0"},
