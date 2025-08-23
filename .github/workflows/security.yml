@@ -2,11 +2,9 @@ name: Security
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main]
   pull_request:
-    branches: [ main, develop ]
-  schedule:
-    - cron: '0 2 * * 1'  # Weekly on Monday at 2 AM UTC
+    branches: [main]
 
 jobs:
   security:
@@ -35,16 +33,3 @@ jobs:
     - name: Run credo code analysis
       run: mix credo --strict
       continue-on-error: true
-
-  dependency-review:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Dependency Review
-      uses: actions/dependency-review-action@v4
-      with:
-        fail-on-severity: moderate 

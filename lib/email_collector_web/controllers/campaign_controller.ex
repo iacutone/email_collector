@@ -193,10 +193,12 @@ defmodule EmailCollectorWeb.CampaignController do
   end
 
   defp csv_escape(nil), do: ""
+
   defp csv_escape(value) when is_binary(value) do
     escaped = String.replace(value, "\"", "\"\"")
     "\"" <> escaped <> "\""
   end
+
   defp csv_escape(value) do
     value
     |> to_string()

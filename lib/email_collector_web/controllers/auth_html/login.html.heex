@@ -4,9 +4,15 @@
     <p>Welcome back to Email Collection</p>
 
     <.form for={%{}} action={~p"/auth/login"} method="post">
-      <.input name="email" type="email" label="Email address" placeholder="Email address" required />
+      <.input
+        name="email"
+        type="email"
+        label="Email address"
+        placeholder="Email address"
+        required
+      />
       <.input name="password" type="password" label="Password" placeholder="Password" required />
-      
+
       <div class="mt-2 flex items-center justify-between gap-6">
         <.button type="submit">Sign in</.button>
       </div>

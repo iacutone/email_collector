@@ -7,8 +7,14 @@
   <section class="form-section">
     <div class="form-card">
       <.form :let={f} for={@changeset} action={~p"/campaigns/#{@campaign.id}"} method="put">
-        <.input field={f[:name]} type="text" label="Campaign Name" placeholder="Enter campaign name" required />
-        
+        <.input
+          field={f[:name]}
+          type="text"
+          label="Campaign Name"
+          placeholder="Enter campaign name"
+          required
+        />
+
         <div class="mt-2 flex items-center justify-between gap-6">
           <.button type="submit">Update Campaign</.button>
           <a href={~p"/campaigns/#{@campaign.id}"} class="btn btn-secondary">Cancel</a>

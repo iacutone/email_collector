@@ -16,7 +16,9 @@ proxy:
   host: email.collection.email
 
   healthcheck:
+    interval: 5
     path: /
+    timeout: 3
 
 # Environment variables
 env:
@@ -24,8 +26,10 @@ env:
     PHX_SERVER: true
     PORT: 4000
   secret:
-    - SECRET_KEY_BASE
+    - AWS_ACCESS_KEY
+    - AWS_SECRET_KEY
     - DATABASE_PATH
+    - SECRET_KEY_BASE
 
 builder:
   arch: amd64

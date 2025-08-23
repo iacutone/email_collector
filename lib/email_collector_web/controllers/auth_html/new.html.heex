@@ -4,10 +4,28 @@
     <p>Join Email Collection today</p>
 
     <.form :let={f} for={@changeset} action={~p"/auth"} method="post">
-      <.input field={f[:email]} type="email" label="Email address" placeholder="Email address" required />
-      <.input field={f[:password]} type="password" label="Password" placeholder="Password" required />
-      <.input field={f[:password_confirmation]} type="password" label="Confirm Password" placeholder="Confirm Password" required />
-      
+      <.input
+        field={f[:email]}
+        type="email"
+        label="Email address"
+        placeholder="Email address"
+        required
+      />
+      <.input
+        field={f[:password]}
+        type="password"
+        label="Password"
+        placeholder="Password"
+        required
+      />
+      <.input
+        field={f[:password_confirmation]}
+        type="password"
+        label="Confirm Password"
+        placeholder="Confirm Password"
+        required
+      />
+
       <div class="mt-2 flex items-center justify-between gap-6">
         <.button type="submit">Sign up</.button>
       </div>

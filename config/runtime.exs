@@ -59,22 +59,11 @@ if config_env() == :prod do
     ],
     secret_key_base: secret_key_base
 
-  # Configure Swoosh for production (example: SES via SMTP or API)
-  # If you prefer SMTP, set adapter and credentials via env vars
-  if System.get_env("SMTP_HOST") do
-    config :email_collector, EmailCollector.Mailer,
-      adapter: Swoosh.Adapters.SMTP,
-      relay: System.get_env("SMTP_HOST"),
-      username: System.get_env("SMTP_USERNAME"),
-      password: System.get_env("SMTP_PASSWORD"),
-      ssl: true,
-      port: String.to_integer(System.get_env("SMTP_PORT") || "465"),
-      retries: 2
-  else
-    # Default to Swoosh SES adapter if SMTP not configured
-    config :email_collector, EmailCollector.Mailer,
-      adapter: Swoosh.Adapters.ExAws
-  end
+  config :email_collector, EmailCollector.Mailer,
+    adapter: Swoosh.Adapters.AmazonSES,
+    region: "us-east-2",
+    access_key: System.get_env("AWS_ACCESS_KEY"),
+    secret: System.get_env("AWS_SECRET_KEY")
 
   # ## SSL Support
   #

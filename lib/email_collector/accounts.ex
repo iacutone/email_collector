@@ -85,20 +85,24 @@ defmodule EmailCollector.Accounts do
   end
 
   def generate_password_reset_token(%User{email: email}) do
-    salt = Application.get_env(:email_collector, :token_salt)
+    salt = Application.get_env(:email_collector, :token_salt) || "auth"
     Phoenix.Token.sign(EmailCollectorWeb.Endpoint, salt, email)
   end
 
   def verify_password_reset_token(token) do
     salt = Application.get_env(:email_collector, :token_salt)
-    max_age = 3600 # 1 hour
+    # 1 hour
+    max_age = 3600
+
     case Phoenix.Token.verify(EmailCollectorWeb.Endpoint, salt, token, max_age: max_age) do
       {:ok, email} ->
         case get_user_by_email(email) do
           nil -> {:error, :not_found}
           user -> {:ok, user}
         end
-      error -> error
+
+      error ->
+        error
     end
   end
 end

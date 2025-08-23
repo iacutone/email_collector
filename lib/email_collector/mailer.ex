@@ -3,9 +3,10 @@ defmodule EmailCollector.Mailer do
 
   use Swoosh.Mailer, otp_app: :email_collector
 
-  @from "noreply@fastcollect.com"
+  @from "noreply@collection.email"
 
-  @spec send_email(String.t(), String.t(), String.t(), String.t()) :: {:ok, term()} | {:error, term()}
+  @spec send_email(String.t(), String.t(), String.t(), String.t()) ::
+          {:ok, term()} | {:error, term()}
   def send_email(to, subject, html_body, text_body) do
     email =
       new_email()

@@ -7,6 +7,7 @@ defmodule EmailCollector.MixProject do
       version: "0.1.0",
       elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
+      listeners: [Phoenix.CodeReloader],
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -50,8 +51,8 @@ defmodule EmailCollector.MixProject do
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:swoosh, "~> 1.19"},
-      {:ex_aws, "~> 2.4"},
-      {:ex_aws_ses, "~> 2.4"},
+      {:gen_smtp, "~> 1.0"},
+      {:hackney, "~> 1.25.0"},
       {:mox, "~> 1.1", only: :test},
       {:cors_plug, "~> 3.0"},
       {:email_address, "~> 1.0"}

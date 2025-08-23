@@ -2,6 +2,7 @@ defmodule EmailCollectorWeb.AuthControllerTest do
   use EmailCollectorWeb.ConnCase
 
   import Swoosh.TestAssertions
+
   setup do
     :ok
   end
@@ -81,7 +82,13 @@ defmodule EmailCollectorWeb.AuthControllerTest do
 
   describe "POST /auth/forgot-password" do
     setup do
-      {:ok, user} = Accounts.create_user(%{email: "resetme@example.com", password: "reset123", password_confirmation: "reset123"})
+      {:ok, user} =
+        Accounts.create_user(%{
+          email: "resetme@example.com",
+          password: "reset123",
+          password_confirmation: "reset123"
+        })
+
       %{user: user}
     end
 
@@ -106,7 +113,13 @@ defmodule EmailCollectorWeb.AuthControllerTest do
 
   describe "GET /auth/reset-password" do
     setup do
-      {:ok, user} = Accounts.create_user(%{email: "resetme2@example.com", password: "reset123", password_confirmation: "reset123"})
+      {:ok, user} =
+        Accounts.create_user(%{
+          email: "resetme2@example.com",
+          password: "reset123",
+          password_confirmation: "reset123"
+        })
+
       token = Accounts.generate_password_reset_token(user)
       %{user: user, token: token}
     end
@@ -133,13 +146,23 @@ defmodule EmailCollectorWeb.AuthControllerTest do
 
   describe "POST /auth/reset-password" do
     setup do
-      {:ok, user} = Accounts.create_user(%{email: "resetme3@example.com", password: "reset123", password_confirmation: "reset123"})
+      {:ok, user} =
+        Accounts.create_user(%{
+          email: "resetme3@example.com",
+          password: "reset123",
+          password_confirmation: "reset123"
+        })
+
       token = Accounts.generate_password_reset_token(user)
       %{user: user, token: token}
     end
 
     test "successfully resets password with valid token", %{conn: conn, token: token, user: user} do
-      params = %{token: token, user: %{password: "newpass123", password_confirmation: "newpass123"}}
+      params = %{
+        token: token,
+        user: %{password: "newpass123", password_confirmation: "newpass123"}
+      }
+
       conn = post(conn, "/auth/reset-password", params)
       assert redirected_to(conn) == "/auth/login"
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "has been reset"
@@ -148,7 +171,11 @@ defmodule EmailCollectorWeb.AuthControllerTest do
     end
 
     test "shows error for invalid token", %{conn: conn} do
-      params = %{token: "badtoken", user: %{password: "newpass123", password_confirmation: "newpass123"}}
+      params = %{
+        token: "badtoken",
+        user: %{password: "newpass123", password_confirmation: "newpass123"}
+      }
+
       conn = post(conn, "/auth/reset-password", params)
       assert redirected_to(conn) == "/auth/forgot-password"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "invalid or has expired"

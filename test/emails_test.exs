@@ -31,10 +31,18 @@ defmodule EmailCollector.EmailsTest do
 
     test "retrieves emails by campaign", %{user: user, campaign: campaign} do
       {:ok, email1} =
-        Emails.create_email(%{name: "user1@example.com", user_id: user.id, campaign_id: campaign.id})
+        Emails.create_email(%{
+          name: "user1@example.com",
+          user_id: user.id,
+          campaign_id: campaign.id
+        })
 
       {:ok, email2} =
-        Emails.create_email(%{name: "user2@example.com", user_id: user.id, campaign_id: campaign.id})
+        Emails.create_email(%{
+          name: "user2@example.com",
+          user_id: user.id,
+          campaign_id: campaign.id
+        })
 
       emails = Emails.list_emails_by_campaign(campaign.id)
       assert Enum.any?(emails, &(&1.id == email1.id))

@@ -68,10 +68,18 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
   describe "GET /api/v1/emails/:campaign_id" do
     test "lists emails for campaign", %{conn: conn, user: user, campaign: campaign} do
       {:ok, email1} =
-        Emails.create_email(%{name: "user1@example.com", user_id: user.id, campaign_id: campaign.id})
+        Emails.create_email(%{
+          name: "user1@example.com",
+          user_id: user.id,
+          campaign_id: campaign.id
+        })
 
       {:ok, email2} =
-        Emails.create_email(%{name: "user2@example.com", user_id: user.id, campaign_id: campaign.id})
+        Emails.create_email(%{
+          name: "user2@example.com",
+          user_id: user.id,
+          campaign_id: campaign.id
+        })
 
       conn = conn |> auth_conn(user.api_key)
       resp = get(conn, "/api/v1/emails/#{campaign.id}")
