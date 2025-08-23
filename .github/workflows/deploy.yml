@@ -7,15 +7,18 @@ on:
 
 jobs:
   deploy:
+    # needs: [test, security]
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     timeout-minutes: 20
     env:
+      DATABASE_PATH: ${{ secrets.DATABASE_URL }}
       DOCKER_BUILDKIT: 1
-      VERSION: ${{ github.sha }}
-      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
       DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKER_REGISTRY_PASSWORD }}
+      HETZNER_HOST: ${{ secrets.HETZNER_HOST }}
+      PHX_HOST: ${{ secrets.PHX_HOST }}
+      SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+      VERSION: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Docker Buildx
@@ -24,6 +27,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
+          ruby-version: '3.3.6'
           bundler-cache: true
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.9.1
