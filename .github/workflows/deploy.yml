@@ -40,6 +40,7 @@ jobs:
           DOCKER_REGISTRY_PASSWORD=${{ secrets.DOCKER_REGISTRY_PASSWORD }}
           HETZNER_HOST=5.161.60.147
           PHX_HOST=${{ secrets.PHX_HOST }}
+          REPLICA_URL=${{ secrets.REPLICA_URL }}
           SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
           EOF
           chmod 600 .kamal/secrets

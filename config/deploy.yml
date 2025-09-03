@@ -25,10 +25,12 @@ env:
   clear:
     PHX_SERVER: true
     PORT: 4000
+    SHELL: /bin/sh
   secret:
     - AWS_ACCESS_KEY
     - AWS_SECRET_KEY
     - DATABASE_PATH
+    - REPLICA_URL
     - SECRET_KEY_BASE
 
 builder:

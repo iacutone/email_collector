@@ -55,7 +55,8 @@ defmodule EmailCollector.MixProject do
       {:hackney, "~> 1.25.0"},
       {:mox, "~> 1.1", only: :test},
       {:cors_plug, "~> 3.0"},
-      {:email_address, "~> 1.0"}
+      {:email_address, "~> 1.0"},
+      {:litestream, "~> 0.4.0", only: :prod}
     ]
   end
 

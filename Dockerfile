@@ -83,6 +83,7 @@ WORKDIR "/app"
 RUN groupadd --system --gid 1001 kamal && \
     useradd --system --uid 1001 --gid kamal --home-dir /app --shell /bin/bash kamal
 RUN chown -R kamal:kamal /app
+USER kamal
 
 # set runner ENV
 ENV MIX_ENV="prod"
@@ -91,9 +92,9 @@ ENV DATABASE_PATH=/app/data/email_collector_prod.db
 # Only copy the final release from the build stage
 COPY --from=builder --chown=kamal:kamal /app/_build/${MIX_ENV}/rel/email_collector ./
 
-USER root
-
 VOLUME ["/app/data"]
 EXPOSE 4000
+
+ENV SHELL=/bin/sh
 
 CMD ["bin/email_collector", "start"]

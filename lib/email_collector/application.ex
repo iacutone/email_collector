@@ -7,14 +7,17 @@ defmodule EmailCollector.Application do
 
   @impl true
   def start(_type, _args) do
-    children = [
-      EmailCollectorWeb.Telemetry,
-      {Phoenix.PubSub, name: EmailCollector.PubSub},
-      EmailCollector.Repo,
-      {Ecto.Migrator,
-       repos: Application.fetch_env!(:email_collector, :ecto_repos), skip: skip_migrations?()},
-      EmailCollectorWeb.Endpoint
-    ]
+    children =
+      [
+        EmailCollectorWeb.Telemetry,
+        {Phoenix.PubSub, name: EmailCollector.PubSub},
+        EmailCollector.Repo,
+        maybe_start_lightstream(),
+        {Ecto.Migrator,
+         repos: Application.fetch_env!(:email_collector, :ecto_repos), skip: skip_migrations?()},
+        EmailCollectorWeb.Endpoint
+      ]
+      |> Enum.filter(&(!is_nil(&1)))
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
@@ -33,5 +36,15 @@ defmodule EmailCollector.Application do
   defp skip_migrations?() do
     # By default, sqlite migrations are run when using a release
     System.get_env("RELEASE_NAME") != nil
+  end
+
+  defp litestream_config do
+    Application.get_env(:email_collector, Litestream)
+  end
+
+  defp maybe_start_lightstream do
+    if Application.get_env(:email_collector, Litestream) do
+      {Litestream, litestream_config()}
+    end
   end
 end

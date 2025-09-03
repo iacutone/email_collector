@@ -62,8 +62,14 @@ if config_env() == :prod do
   config :email_collector, EmailCollector.Mailer,
     adapter: Swoosh.Adapters.AmazonSES,
     region: "us-east-2",
-    access_key: System.get_env("AWS_ACCESS_KEY"),
-    secret: System.get_env("AWS_SECRET_KEY")
+    access_key: System.fetch_env!("AWS_ACCESS_KEY"),
+    secret: System.fetch_env!("AWS_SECRET_KEY")
+
+  config :email_collector, Litestream,
+    repo: EmailCollector.Repo,
+    replica_url: System.fetch_env!("REPLICA_URL"),
+    access_key_id: System.fetch_env!("AWS_ACCESS_KEY"),
+    secret_access_key: System.fetch_env!("AWS_SECRET_KEY")
 
   # ## SSL Support
   #
