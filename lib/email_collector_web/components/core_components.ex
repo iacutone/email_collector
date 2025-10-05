@@ -126,9 +126,8 @@ defmodule EmailCollectorWeb.CoreComponents do
         {@title}
       </p>
       <p class="flash-message">{msg}</p>
-      <button type="button" aria-label="close">
-        <.icon name="hero-x-mark-solid" class="hero-x-mark-solid" />
-      </button>
+
+      <button type="button" aria-label="close">x</button>
     </div>
     """
   end
