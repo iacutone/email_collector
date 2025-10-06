@@ -16,5 +16,7 @@ updates:
     commit-message:
       prefix: "deps"
       include: "scope"
+    env:
+      MIX_ENV: "prod"
     labels:
       - "dependencies"
