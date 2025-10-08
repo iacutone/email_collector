@@ -7,7 +7,7 @@ defmodule EmailCollector.MixProject do
       version: "0.1.0",
       elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
-      listeners: [Phoenix.CodeReloader],
+      listeners: listeners(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
@@ -80,5 +80,13 @@ defmodule EmailCollector.MixProject do
       ],
       dialyzer: "dialyzer"
     ]
+  end
+
+  defp listeners do
+    if System.get_env("DEPENDABOT_HOME") do
+      []
+    else
+      [Phoenix.CodeReloader]
+    end
   end
 end
