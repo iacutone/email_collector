@@ -116,6 +116,90 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
     end
   end
 
+  describe "POST /api/v1/emails/:campaign_id time-based bot detection" do
+    test "allows submission with valid timing", %{conn: conn, campaign: campaign} do
+      # Simulate form loaded 3 seconds ago
+      form_loaded_at = System.system_time(:millisecond) - 3000
+
+      resp =
+        post(conn, "/api/v1/emails/#{campaign.id}", %{
+          email: %{name: "valid@example.com"},
+          form_loaded_at: form_loaded_at
+        })
+
+      assert resp.status == 201
+    end
+
+    test "rejects submission that's too fast (< 2 seconds)", %{conn: conn, campaign: campaign} do
+      # Simulate form loaded 1 second ago
+      form_loaded_at = System.system_time(:millisecond) - 1000
+
+      resp =
+        post(conn, "/api/v1/emails/#{campaign.id}", %{
+          email: %{name: "bot@example.com"},
+          form_loaded_at: form_loaded_at
+        })
+
+      assert resp.status == 422
+      resp_body = json_response(resp, 422)
+      assert resp_body["error"] == "Form submitted too quickly. Please try again."
+    end
+
+    test "rejects submission with future timestamp", %{conn: conn, campaign: campaign} do
+      # Timestamp in the future
+      form_loaded_at = System.system_time(:millisecond) + 5000
+
+      resp =
+        post(conn, "/api/v1/emails/#{campaign.id}", %{
+          email: %{name: "suspicious@example.com"},
+          form_loaded_at: form_loaded_at
+        })
+
+      assert resp.status == 422
+      resp_body = json_response(resp, 422)
+      assert resp_body["error"] == "Invalid form submission."
+    end
+
+    test "rejects expired form (> 1 hour old)", %{conn: conn, campaign: campaign} do
+      # Form loaded over 1 hour ago
+      form_loaded_at = System.system_time(:millisecond) - :timer.hours(2)
+
+      resp =
+        post(conn, "/api/v1/emails/#{campaign.id}", %{
+          email: %{name: "expired@example.com"},
+          form_loaded_at: form_loaded_at
+        })
+
+      assert resp.status == 422
+      resp_body = json_response(resp, 422)
+      assert resp_body["error"] == "Form has expired. Please reload and try again."
+    end
+
+    test "allows submission without timestamp (optional feature)", %{
+      conn: conn,
+      campaign: campaign
+    } do
+      resp =
+        post(conn, "/api/v1/emails/#{campaign.id}", %{
+          email: %{name: "notimestamp@example.com"}
+        })
+
+      assert resp.status == 201
+    end
+
+    test "rejects invalid timestamp format", %{conn: conn, campaign: campaign} do
+      resp =
+        post(conn, "/api/v1/emails/#{campaign.id}", %{
+          email: %{name: "invalid@example.com"},
+          form_loaded_at: "not-a-number"
+        })
+
+      assert resp.status == 422
+      resp_body = json_response(resp, 422)
+      assert resp_body["error"] == "Invalid form data."
+    end
+  end
+
   describe "POST /api/v1/emails/:campaign_id rate limiting" do
     test "allows requests within IP rate limit", %{conn: conn, campaign: campaign} do
       # Make 5 requests - should all succeed

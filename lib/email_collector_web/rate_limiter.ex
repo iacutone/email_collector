@@ -6,6 +6,7 @@ defmodule EmailCollectorWeb.RateLimiter do
 
   - **Per IP Address**: 100 requests per hour
   - **Per Campaign**: 500 requests per hour
+  - **Minimum Form Time**: 2 seconds (bots submit too fast)
 
   ## Configuration
 
@@ -22,6 +23,7 @@ defmodule EmailCollectorWeb.RateLimiter do
 
   @ip_rate_limit_per_hour 100
   @campaign_rate_limit_per_hour 500
+  @min_form_time_ms 2000
 
   @doc """
   Check if an IP address has exceeded its rate limit.
@@ -80,4 +82,76 @@ defmodule EmailCollectorWeb.RateLimiter do
   Get the current campaign rate limit.
   """
   def campaign_rate_limit, do: @campaign_rate_limit_per_hour
+
+  @doc """
+  Validate that enough time has passed since form load.
+
+  Expects a `form_loaded_at` timestamp (Unix milliseconds) in the params.
+  Returns `{:ok, :valid}` if enough time passed, `{:error, :too_fast}` otherwise.
+
+  Bots typically submit forms instantly (< 2 seconds), while humans need time to:
+  - Read the form
+  - Type their email
+  - Click submit
+
+  ## Example
+
+      # Client sends timestamp when form was loaded
+      %{"form_loaded_at" => 1638360000000, "email" => %{"name" => "user@example.com"}}
+  """
+  def check_form_timing(form_loaded_at) when is_integer(form_loaded_at) do
+    current_time = System.system_time(:millisecond)
+    time_elapsed = current_time - form_loaded_at
+
+    cond do
+      # Form loaded in the future? Suspicious
+      time_elapsed < 0 ->
+        {:error, :suspicious_timing}
+
+      # Too fast? Likely a bot
+      time_elapsed < @min_form_time_ms ->
+        {:error, :too_fast}
+
+      # Too slow? Could be legitimate but also suspicious (> 1 hour)
+      time_elapsed > :timer.hours(1) ->
+        {:error, :expired}
+
+      # Just right
+      true ->
+        {:ok, :valid}
+    end
+  end
+
+  def check_form_timing(_), do: {:error, :invalid_timestamp}
+
+  @doc """
+  Generate a form token with timestamp for client-side forms.
+
+  Returns a signed token that includes the current timestamp.
+  The client should send this back with the form submission.
+  """
+  def generate_form_token do
+    timestamp = System.system_time(:millisecond)
+    Base.encode64("#{timestamp}")
+  end
+
+  @doc """
+  Decode and validate a form token.
+
+  Returns `{:ok, timestamp}` if valid, `{:error, reason}` otherwise.
+  """
+  def decode_form_token(token) when is_binary(token) do
+    case Base.decode64(token) do
+      {:ok, decoded} ->
+        case Integer.parse(decoded) do
+          {timestamp, ""} -> {:ok, timestamp}
+          _ -> {:error, :invalid_token}
+        end
+
+      :error ->
+        {:error, :invalid_token}
+    end
+  end
+
+  def decode_form_token(_), do: {:error, :invalid_token}
 end

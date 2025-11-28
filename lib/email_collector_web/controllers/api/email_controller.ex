@@ -5,13 +5,14 @@ defmodule EmailCollectorWeb.Api.EmailController do
   alias EmailCollector.Emails
   alias EmailCollectorWeb.RateLimiter
 
-  def create(conn, %{"campaign_id" => campaign_id, "email" => email_params}) do
+  def create(conn, %{"campaign_id" => campaign_id, "email" => email_params} = params) do
     # No authentication required for POST
     ip_address = RateLimiter.get_client_ip(conn)
 
-    # Check rate limits
+    # Check all bot protection measures
     with {:ok, :allowed} <- RateLimiter.check_ip_rate_limit(ip_address),
-         {:ok, :allowed} <- RateLimiter.check_campaign_rate_limit(campaign_id) do
+         {:ok, :allowed} <- RateLimiter.check_campaign_rate_limit(campaign_id),
+         {:ok, :valid} <- check_form_timing(params) do
       case Campaigns.get_campaign(campaign_id) do
         nil ->
           conn
@@ -48,6 +49,26 @@ defmodule EmailCollectorWeb.Api.EmailController do
         conn
         |> put_status(:too_many_requests)
         |> json(%{error: "Rate limit exceeded. Please try again later."})
+
+      {:error, :too_fast} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: "Form submitted too quickly. Please try again."})
+
+      {:error, :suspicious_timing} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: "Invalid form submission."})
+
+      {:error, :expired} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: "Form has expired. Please reload and try again."})
+
+      {:error, :invalid_timestamp} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: "Invalid form data."})
     end
   end
 
@@ -133,4 +154,18 @@ defmodule EmailCollectorWeb.Api.EmailController do
       end)
     end)
   end
+
+  defp check_form_timing(%{"form_loaded_at" => timestamp}) when is_integer(timestamp) do
+    RateLimiter.check_form_timing(timestamp)
+  end
+
+  defp check_form_timing(%{"form_loaded_at" => timestamp}) when is_binary(timestamp) do
+    case Integer.parse(timestamp) do
+      {int_timestamp, ""} -> RateLimiter.check_form_timing(int_timestamp)
+      _ -> {:error, :invalid_timestamp}
+    end
+  end
+
+  # If no timestamp provided, allow it (optional feature)
+  defp check_form_timing(_), do: {:ok, :valid}
 end
