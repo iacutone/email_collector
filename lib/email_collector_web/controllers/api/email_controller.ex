@@ -71,6 +71,41 @@ defmodule EmailCollectorWeb.Api.EmailController do
     end
   end
 
+  def unsubscribe(conn, %{"campaign_id" => campaign_id, "email" => email_name}) do
+    # No authentication required for unsubscribe
+    case Campaigns.get_campaign(campaign_id) do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Campaign not found"})
+
+      _campaign ->
+        case Emails.get_email_by_campaign_and_name(campaign_id, email_name) do
+          nil ->
+            conn
+            |> put_status(:not_found)
+            |> json(%{error: "Email not found in this campaign"})
+
+          email ->
+            case Emails.unsubscribe_email(email) do
+              {:ok, updated_email} ->
+                conn
+                |> put_status(:ok)
+                |> json(%{
+                  message: "Successfully unsubscribed",
+                  email: email_name,
+                  subscribed: updated_email.subscribed
+                })
+
+              {:error, changeset} ->
+                conn
+                |> put_status(:unprocessable_entity)
+                |> json(%{error: "Failed to unsubscribe", details: format_changeset_errors(changeset)})
+            end
+        end
+    end
+  end
+
   def options(conn, _params) do
     conn
     |> put_resp_header("access-control-allow-origin", "*")
