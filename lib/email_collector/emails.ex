@@ -77,4 +77,20 @@ defmodule EmailCollector.Emails do
     |> where(campaign_id: ^campaign_id)
     |> Repo.aggregate(:count, :id)
   end
+
+  @doc """
+  Gets an email by campaign_id and email name.
+  """
+  def get_email_by_campaign_and_name(campaign_id, name) do
+    Email
+    |> where(campaign_id: ^campaign_id, name: ^name)
+    |> Repo.one()
+  end
+
+  @doc """
+  Unsubscribes an email by setting subscribed to false.
+  """
+  def unsubscribe_email(%Email{} = email) do
+    update_email(email, %{subscribed: false})
+  end
 end
