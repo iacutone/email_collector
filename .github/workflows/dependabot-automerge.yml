@@ -1,7 +1,7 @@
 name: Dependabot Auto-merge
 
 on:
-  pull_request:
+  pull_request_target:
     branches: [main]
 
 permissions:
@@ -11,7 +11,7 @@ permissions:
 jobs:
   automerge:
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
       - name: Wait for Test workflow
         uses: lewagon/wait-on-check-action@v1.3.4
