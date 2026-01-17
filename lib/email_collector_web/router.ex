@@ -61,6 +61,7 @@ defmodule EmailCollectorWeb.Router do
   scope "/api/v1", EmailCollectorWeb.Api do
     pipe_through :api_with_cors
     post "/emails/:campaign_id", EmailController, :create
+    post "/emails/:campaign_id/unsubscribe", EmailController, :unsubscribe
     options "/emails/:id", EmailController, :options
 
     # GET requires authentication
