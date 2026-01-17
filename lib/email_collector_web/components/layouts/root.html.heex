@@ -1,13 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" class="[scrollbar-gutter:stable]">
   <head>
+    <title>Email Collection - Dead Simple Email Management for Developers</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="EmailCollector" suffix=" · Phoenix Framework">
+    <.live_title default="Email Collection" suffix=" · Dead Simple Email Management for Developers">
       {assigns[:page_title]}
     </.live_title>
+    <meta name="description" content="Developer-first email collection API with zero JavaScript bloat. Unlike MailChimp and ConvertKit, we don't tank your Lighthouse scores. Simple REST endpoints, no third-party scripts, maximum performance.">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Email Collection - Dead Simple Email Management for Developers">
+    <meta property="og:description" content="Developer-first email collection API with zero JavaScript bloat. Unlike MailChimp and ConvertKit, we don't tank your Lighthouse scores. Simple REST endpoints, no third-party scripts, maximum performance.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="email.webp">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="canonical" href="https://collection.email">
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer data-domain="email-collection.com" src="https://plausible.iacutone.synology.me/js/script.js"></script>
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
