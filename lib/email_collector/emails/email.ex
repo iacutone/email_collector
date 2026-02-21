@@ -4,6 +4,7 @@ defmodule EmailCollector.Emails.Email do
 
   schema "emails" do
     field :name, :string
+    field :subscribed, :boolean, default: true
     belongs_to :user, EmailCollector.Accounts.User
     belongs_to :campaign, EmailCollector.Campaigns.Campaign, type: :binary_id
 
@@ -12,7 +13,7 @@ defmodule EmailCollector.Emails.Email do
 
   def changeset(email, attrs) do
     email
-    |> cast(attrs, [:name, :user_id, :campaign_id])
+    |> cast(attrs, [:name, :user_id, :campaign_id, :subscribed])
     |> validate_required([:name, :user_id, :campaign_id])
     |> validate_email(:name)
     |> unique_constraint([:campaign_id, :name],
