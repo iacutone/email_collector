@@ -1,25 +1,213 @@
-<.flash_group flash={@flash} />
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Collection - Dead Simple Email Management for Developers</title>
+    <meta
+      name="description"
+      content="Developer-first email collection API with zero JavaScript bloat. Unlike MailChimp and ConvertKit, we don't tank your Lighthouse scores. Simple REST endpoints, no third-party scripts, maximum performance."
+    />
+    <meta name="robots" content="index, follow" />
+    <meta
+      property="og:title"
+      content="Email Collection - Dead Simple Email Management for Developers"
+    />
+    <meta
+      property="og:description"
+      content="Developer-first email collection API with zero JavaScript bloat. Unlike MailChimp and ConvertKit, we don't tank your Lighthouse scores. Simple REST endpoints, no third-party scripts, maximum performance."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="stylesheet" href="/css/landing.css" />
+    <script defer src="/js/landing.js">
+    </script>
+  </head>
 
-<header>
-  <h1>Email Collection, Zero Bloat</h1>
-  <p>The developer-first email collection service that doesn't tank your Lighthouse scores.</p>
-</header>
-
-<section>
-  <h2>Get Started</h2>
-  <p>Two simple endpoints. No third-party JS. Maximum performance.</p>
-
-  <%= if @current_user do %>
-    <p>Welcome back! You're all set to start collecting emails.</p>
-  <% else %>
-    <div class="auth-actions">
-      <a href={~p"/auth/login"} class="btn btn-primary">Login</a>
-      <a href={~p"/auth/new"} class="btn btn-secondary">Sign up</a>
+  <body>
+    <div class="bg-animation">
+      <div class="code-line" style="left: 10%; animation-delay: 0s;">POST /emails</div>
+      <div class="code-line" style="left: 80%; animation-delay: 5s;">GET /emails</div>
+      <div class="code-line" style="left: 30%; animation-delay: 10s;">Lighthouse: 100</div>
+      <div class="code-line" style="left: 60%; animation-delay: 15s;">Zero JS bloat</div>
+      <div class="code-line" style="left: 90%; animation-delay: 20s;">await fetch()</div>
+      <div class="code-line" style="left: 20%; animation-delay: 25s;">Performance++</div>
     </div>
-  <% end %>
-</section>
 
-<section>
-  <h2>Simple, Clean API</h2>
-  <pre><code><%= Phoenix.HTML.raw(~s(curl -X POST \\\n+  https://email.collection.email/api/v1/emails/2 \\\n+  -H "Content-Type: application/json" \\\n+  -d '{\"email\": {\"name\": \"example@email.com\"}}')) %></code></pre>
-</section>
+    <header>
+      <div class="container">
+        <a href="/" class="logo">email-collection.com</a>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="container">
+        <h1>Email Collection, Zero Bloat</h1>
+        <p>
+          The developer-first email collection service that doesn't tank your Lighthouse scores. Clean APIs, no third-party JavaScript, maximum performance.
+        </p>
+
+        <form id="emailForm">
+          <div class="form-group">
+            <.form for={%{}} action={~p"/auth/login"} method="post">
+              <.input
+                name="email"
+                type="email"
+                label="Email address"
+                placeholder="Email address"
+                required
+              />
+              <.input name="password" type="password" label="Password" placeholder="Password" required />
+
+              <div class="mt-2 flex items-center justify-between gap-6">
+                <.button type="submit">Sign in</.button>
+              </div>
+            </.form>
+
+            <div class="auth-links">
+              <a href={~p"/auth/forgot-password"} class="forgot-password-link">Forgot your password?</a>
+              <a href={~p"/auth/new"}>Don't have an account? Sign up</a>
+            </div>
+          </div>
+        </form>
+
+        <div class="performance-stats">
+          <div class="stat-card">
+            <div class="stat-number">100</div>
+            <div class="stat-label">Lighthouse Score</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">0kb</div>
+            <div class="stat-label">JavaScript Bloat</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">2</div>
+            <div class="stat-label">Simple Endpoints</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <h2>Built for Developers Who Care About Performance</h2>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Zero Third-Party JS</h3>
+            <p>
+              Unlike MailChimp, MailerLite, and ConvertKit, we don't embed any external JavaScript. Your site stays fast, your Lighthouse scores stay perfect.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🚀</div>
+            <h3>Lightning Fast APIs</h3>
+            <p>
+              Two simple endpoints: POST to collect emails, GET to retrieve them. Built for speed with modern infrastructure that developers actually want to use.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔧</div>
+            <h3>Developer Experience First</h3>
+            <p>
+              Clean REST APIs, comprehensive documentation, and none of the marketing fluff. Built by engineers, for engineers who value clean code.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Performance Metrics</h3>
+            <p>
+              Monitor your collection rates without sacrificing site performance. Get the insights you need without the JavaScript overhead.
+            </p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">💎</div>
+            <h3>Generous API Limits</h3>
+            <p>With a free account, enjoy reasonable campaign and email limits.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">❌</div>
+            <h3>No Branding</h3>
+            <p>You won't be forced to embed our branding.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="code-section" id="code">
+      <div class="container">
+        <h2>Simple, Clean API</h2>
+        <p>
+          Two endpoints. That's it. No complicated SDKs, no widget builders, no performance nightmares.
+        </p>
+
+        <div class="code-examples">
+          <div class="code-block">
+            <h4>📥 Collect Emails</h4>
+            <pre><%= raw """
+curl -X POST \\
+  #{@base_url}/api/v1/emails/YOUR_CAMPAIGN_ID \\
+  -H "Content-Type: application/json" \\
+  -d '{"email": {"name": "example@email.com"}}'
+""" %></pre>
+          </div>
+
+          <div class="code-block">
+            <h4>📤 Retrieve Emails</h4>
+            <pre><%= raw """
+curl -X GET \\
+  #{@base_url}/api/v1/emails/YOUR_CAMPAIGN_ID \\
+  -H 'Authorization: Bearer YOUR_API_KEY'
+""" %></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <h3>Ready to Stop Sacrificing Performance?</h3>
+          <p>Join developers who refuse to compromise on site speed for email collection.</p>
+          <a href="/auth/new" class="cta-button">Get Started Today</a>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("emailForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const emailValue = document.getElementById("email").value;
+        const formLoadedAt = Date.now();
+
+        // You'll need to replace this with an actual campaign ID
+        const campaignId = "YOUR_DEMO_CAMPAIGN_ID";
+
+        try {
+          const response = await fetch(`/api/v1/emails/${campaignId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: {
+                name: emailValue
+              },
+              form_loaded_at: formLoadedAt
+            })
+          });
+
+          if (response.ok) {
+            alert("Email submitted successfully! Check your inbox for confirmation.");
+            document.getElementById("email").value = "";
+          } else {
+            const error = await response.json();
+            alert("Error: " + (error.error || "Something went wrong"));
+          }
+        } catch (err) {
+          alert("Network error. Please try again.");
+        }
+      });
+    </script>
+  </body>
+</html>
