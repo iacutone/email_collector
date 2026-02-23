@@ -13,7 +13,9 @@ registry:
 proxy:
   ssl: true
   app_port: 4000
-  host: collection.email
+    hosts:
+      - collection.email
+      - email.collection.email
 
   healthcheck:
     interval: 5
