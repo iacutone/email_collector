@@ -1,0 +1,9 @@
+# This file is not needed if you use environment variables!
+# 
+# Instead, set these environment variables:
+#   export CLOUDFLARE_API_TOKEN="your-cloudflare-api-token"
+#   export TF_VAR_cloudflare_zone_id="your-zone-id"
+#
+# If you prefer to use this file instead of environment variables,
+# uncomment the line below and add your zone ID:
+# cloudflare_zone_id = "your-zone-id-here"
