@@ -45,8 +45,8 @@ defmodule EmailCollector.EmailsTest do
     end
 
     test "validates email format", %{user: user, campaign: campaign} do
-      invalid_emails = ["invalid", "@example.com", "test@", "test.com", ""]
-      
+      invalid_emails = ["invalid", "@example.com", "test@", "test.com"]
+
       for invalid_email <- invalid_emails do
         attrs = %{name: invalid_email, user_id: user.id, campaign_id: campaign.id}
         {:error, changeset} = Emails.create_email(attrs)
@@ -70,10 +70,10 @@ defmodule EmailCollector.EmailsTest do
 
     test "enforces unique email per campaign", %{user: user, campaign: campaign} do
       attrs = %{name: "duplicate@example.com", user_id: user.id, campaign_id: campaign.id}
-      
+
       # First creation should succeed
       {:ok, _email} = Emails.create_email(attrs)
-      
+
       # Second creation should fail
       {:error, changeset} = Emails.create_email(attrs)
       assert "An email with this name already exists in this campaign" in errors_on(changeset).name

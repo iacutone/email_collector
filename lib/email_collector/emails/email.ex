@@ -5,6 +5,7 @@ defmodule EmailCollector.Emails.Email do
   schema "emails" do
     field :name, :string
     field :subscribed, :boolean, default: true
+    field :misc, :map
     belongs_to :user, EmailCollector.Accounts.User
     belongs_to :campaign, EmailCollector.Campaigns.Campaign, type: :binary_id
 
@@ -13,10 +14,11 @@ defmodule EmailCollector.Emails.Email do
 
   def changeset(email, attrs) do
     email
-    |> cast(attrs, [:name, :user_id, :campaign_id, :subscribed])
+    |> cast(attrs, [:name, :subscribed, :misc, :user_id, :campaign_id])
     |> validate_required([:name, :user_id, :campaign_id])
     |> validate_email(:name)
-    |> unique_constraint([:campaign_id, :name],
+    |> unique_constraint(:name,
+      name: :emails_campaign_id_name_index,
       message: "An email with this name already exists in this campaign"
     )
   end

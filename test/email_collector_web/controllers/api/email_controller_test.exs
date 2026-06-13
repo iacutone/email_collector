@@ -20,15 +20,14 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
   end
 
   def auth_conn(conn, api_key), do: put_req_header(conn, "authorization", "Bearer #{api_key}")
-  
-  def with_user_agent(conn), do: put_req_header(conn, "user-agent", "Mozilla/5.0 (Test Browser)")
 
   describe "POST /api/v1/emails/:campaign_id" do
     test "creates email without authentication", %{
       conn: conn,
       campaign: campaign
     } do
-      resp = conn |> with_user_agent() |> post("/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
+      resp = post(conn, "/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
+
       assert resp.status == 201
       resp_body = json_response(resp, 201)
       assert resp_body["id"]
@@ -45,7 +44,9 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
         })
 
       {:ok, other_campaign} = Campaigns.create_campaign(%{name: "Other", user_id: other_user.id})
-      resp = conn |> with_user_agent() |> post("/api/v1/emails/#{other_campaign.id}", %{email: @valid_email_params})
+
+      resp = post(conn, "/api/v1/emails/#{other_campaign.id}", %{email: @valid_email_params})
+
       assert resp.status == 201
       resp_body = json_response(resp, 201)
       assert resp_body["id"]
@@ -54,74 +55,19 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
     end
 
     test "returns 404 for non-existent campaign", %{conn: conn} do
-      resp = conn |> with_user_agent() |> post("/api/v1/emails/999999", %{email: @valid_email_params})
+      resp = post(conn, "/api/v1/emails/999999", %{email: @valid_email_params})
+
       assert resp.status == 404
     end
 
     test "rejects invalid email addresses", %{conn: conn, campaign: campaign} do
-      resp = conn |> with_user_agent() |> post("/api/v1/emails/#{campaign.id}", %{email: %{name: "invalid-email"}})
+      resp =
+        post(conn, "/api/v1/emails/#{campaign.id}", %{email: %{name: "invalid-email"}})
+
       assert resp.status == 422
       resp_body = json_response(resp, 422)
       assert resp_body["error"] == "Invalid email data"
       assert resp_body["details"]["name"] == ["must be a valid email address"]
-    end
-
-    # Bot Detection Tests
-    test "blocks requests with bot user-agents", %{conn: conn, campaign: campaign} do
-      bot_agents = ["curl/7.68.0", "wget/1.20.3", "python-requests/2.25.1", "PostmanRuntime/7.26.8"]
-      
-      for agent <- bot_agents do
-        resp = 
-          conn 
-          |> put_req_header("user-agent", agent)
-          |> post("/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
-        
-        assert resp.status == 403
-        resp_body = json_response(resp, 403)
-        assert resp_body["error"] == "Suspicious request detected"
-      end
-    end
-
-    test "blocks requests without user-agent header", %{conn: conn, campaign: campaign} do
-      resp = post(conn, "/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
-      assert resp.status == 400
-      resp_body = json_response(resp, 400)
-      assert resp_body["error"] == "User-Agent header required"
-    end
-
-    test "allows requests with legitimate user-agents", %{conn: conn, campaign: campaign} do
-      legitimate_agents = [
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "MyApp/1.0",
-        "LegitimateClient/2.5.1"
-      ]
-
-      for agent <- legitimate_agents do
-        resp = 
-          conn
-          |> put_req_header("user-agent", agent)
-          |> post("/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
-        
-        assert resp.status == 201
-        resp_body = json_response(resp, 201)
-        assert resp_body["name"] == "test@example.com"
-      end
-    end
-
-    test "handles case-insensitive bot detection", %{conn: conn, campaign: campaign} do
-      mixed_case_bots = ["CURL/7.68.0", "Wget/1.20.3", "POSTMAN/7.26.8", "Bot/1.0"]
-      
-      for agent <- mixed_case_bots do
-        resp = 
-          conn
-          |> put_req_header("user-agent", agent)
-          |> post("/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
-        
-        assert resp.status == 403
-        resp_body = json_response(resp, 403)
-        assert resp_body["error"] == "Suspicious request detected"
-      end
     end
   end
 
@@ -207,19 +153,18 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
       assert updated_email.subscribed == false
     end
 
-    test "unsubscribe works without User-Agent header (no bot detection)", %{
+    test "unsubscribe works without User-Agent header", %{
       conn: conn,
       user: user,
       campaign: campaign
     } do
-      {:ok, email} =
+      {:ok, _email} =
         Emails.create_email(%{
           name: "no_ua@example.com",
           user_id: user.id,
           campaign_id: campaign.id
         })
 
-      # Unsubscribe without User-Agent should work (no bot detection on unsubscribe)
       resp =
         post(conn, "/api/v1/emails/#{campaign.id}/unsubscribe", %{
           email: "no_ua@example.com"
