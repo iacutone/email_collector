@@ -35,7 +35,11 @@
 
     <header>
       <div class="container">
-        <a href="/" class="logo">email-collection.com</a>
+        <a href="/" class="logo">collection.email</a>
+        <nav class="header-nav">
+          <a href="/signin" class="nav-link">Sign in</a>
+          <a href="/auth/new" class="nav-button">Sign up</a>
+        </nav>
       </div>
     </header>
 
@@ -46,29 +50,10 @@
           The developer-first email collection service that doesn't tank your Lighthouse scores. Clean APIs, no third-party JavaScript, maximum performance.
         </p>
 
-        <form id="emailForm">
-          <div class="form-group">
-            <.form for={%{}} action={~p"/auth/login"} method="post">
-              <.input
-                name="email"
-                type="email"
-                label="Email address"
-                placeholder="Email address"
-                required
-              />
-              <.input name="password" type="password" label="Password" placeholder="Password" required />
-
-              <div class="mt-2 flex items-center justify-between gap-6">
-                <.button type="submit">Sign in</.button>
-              </div>
-            </.form>
-
-            <div class="auth-links">
-              <a href={~p"/auth/forgot-password"} class="forgot-password-link">Forgot your password?</a>
-              <a href={~p"/auth/new"}>Don't have an account? Sign up</a>
-            </div>
-          </div>
-        </form>
+        <div class="hero-cta">
+          <a href="/auth/new" class="cta-button primary">Sign up - It's free</a>
+          <a href="/signin" class="cta-button secondary">Sign in</a>
+        </div>
 
         <div class="performance-stats">
           <div class="stat-card">
@@ -172,42 +157,5 @@ curl -X GET \\
         </div>
       </div>
     </footer>
-
-    <script>
-      document.getElementById("emailForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
-
-        const emailValue = document.getElementById("email").value;
-        const formLoadedAt = Date.now();
-
-        // You'll need to replace this with an actual campaign ID
-        const campaignId = "YOUR_DEMO_CAMPAIGN_ID";
-
-        try {
-          const response = await fetch(`/api/v1/emails/${campaignId}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email: {
-                name: emailValue
-              },
-              form_loaded_at: formLoadedAt
-            })
-          });
-
-          if (response.ok) {
-            alert("Email submitted successfully! Check your inbox for confirmation.");
-            document.getElementById("email").value = "";
-          } else {
-            const error = await response.json();
-            alert("Error: " + (error.error || "Something went wrong"));
-          }
-        } catch (err) {
-          alert("Network error. Please try again.");
-        }
-      });
-    </script>
   </body>
 </html>

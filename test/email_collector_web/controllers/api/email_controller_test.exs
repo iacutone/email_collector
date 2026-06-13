@@ -27,6 +27,7 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
       campaign: campaign
     } do
       resp = post(conn, "/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
+
       assert resp.status == 201
       resp_body = json_response(resp, 201)
       assert resp_body["id"]
@@ -43,7 +44,9 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
         })
 
       {:ok, other_campaign} = Campaigns.create_campaign(%{name: "Other", user_id: other_user.id})
+
       resp = post(conn, "/api/v1/emails/#{other_campaign.id}", %{email: @valid_email_params})
+
       assert resp.status == 201
       resp_body = json_response(resp, 201)
       assert resp_body["id"]
@@ -53,11 +56,14 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
 
     test "returns 404 for non-existent campaign", %{conn: conn} do
       resp = post(conn, "/api/v1/emails/999999", %{email: @valid_email_params})
+
       assert resp.status == 404
     end
 
     test "rejects invalid email addresses", %{conn: conn, campaign: campaign} do
-      resp = post(conn, "/api/v1/emails/#{campaign.id}", %{email: %{name: "invalid-email"}})
+      resp =
+        post(conn, "/api/v1/emails/#{campaign.id}", %{email: %{name: "invalid-email"}})
+
       assert resp.status == 422
       resp_body = json_response(resp, 422)
       assert resp_body["error"] == "Invalid email data"
@@ -145,6 +151,28 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
       # Verify the email was actually updated in the database
       updated_email = Emails.get_email!(email.id)
       assert updated_email.subscribed == false
+    end
+
+    test "unsubscribe works without User-Agent header", %{
+      conn: conn,
+      user: user,
+      campaign: campaign
+    } do
+      {:ok, _email} =
+        Emails.create_email(%{
+          name: "no_ua@example.com",
+          user_id: user.id,
+          campaign_id: campaign.id
+        })
+
+      resp =
+        post(conn, "/api/v1/emails/#{campaign.id}/unsubscribe", %{
+          email: "no_ua@example.com"
+        })
+
+      assert resp.status == 200
+      resp_body = json_response(resp, 200)
+      assert resp_body["subscribed"] == false
     end
 
     test "returns 404 for non-existent campaign", %{conn: conn} do

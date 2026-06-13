@@ -48,6 +48,7 @@ defmodule EmailCollectorWeb.Router do
     get "/new", AuthController, :new
     post "/", AuthController, :create
     get "/login", AuthController, :login
+    get "/signin", AuthController, :login  # Add signin alias
     post "/login", AuthController, :authenticate
     delete "/logout", AuthController, :logout
 
