@@ -70,11 +70,16 @@ if config_env() == :prod do
     access_key: System.fetch_env!("AWS_ACCESS_KEY"),
     secret: System.fetch_env!("AWS_SECRET_KEY")
 
-  config :email_collector, Litestream,
-    repo: EmailCollector.Repo,
-    replica_url: System.fetch_env!("REPLICA_URL"),
-    access_key_id: System.fetch_env!("LITESTREAM_ACCESS_KEY_ID"),
-    secret_access_key: System.fetch_env!("LITESTREAM_SECRET_ACCESS_KEY")
+  if config_env() == :prod do
+    config :email_collector, Litestream,
+      repo: EmailCollector.Repo,
+      strategy:
+        struct!(Litestream.Strategy.ObjectStorage,
+          url: System.fetch_env!("REPLICA_URL"),
+          access_key_id: System.fetch_env!("LITESTREAM_ACCESS_KEY_ID"),
+          secret_access_key: System.fetch_env!("LITESTREAM_SECRET_ACCESS_KEY")
+        )
+  end
 
   # ## SSL Support
   #
