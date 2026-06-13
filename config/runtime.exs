@@ -72,9 +72,11 @@ if config_env() == :prod do
 
   config :email_collector, Litestream,
     repo: EmailCollector.Repo,
-    replica_url: System.fetch_env!("REPLICA_URL"),
-    access_key_id: System.fetch_env!("LITESTREAM_ACCESS_KEY_ID"),
-    secret_access_key: System.fetch_env!("LITESTREAM_SECRET_ACCESS_KEY")
+    strategy: %Litestream.Strategy.ObjectStorage{
+      url: System.fetch_env!("REPLICA_URL"),
+      access_key_id: System.fetch_env!("LITESTREAM_ACCESS_KEY_ID"),
+      secret_access_key: System.fetch_env!("LITESTREAM_SECRET_ACCESS_KEY")
+    }
 
   # ## SSL Support
   #
