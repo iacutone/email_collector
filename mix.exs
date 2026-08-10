@@ -52,7 +52,7 @@ defmodule EmailCollector.MixProject do
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:swoosh, "~> 1.19"},
       {:gen_smtp, "~> 1.0"},
-      {:hackney, "~> 4.6.0"},
+      {:hackney, "~> 4.7.2"},
       {:mox, "~> 1.1", only: :test},
       {:cors_plug, "~> 3.0"},
       {:email_address, "~> 1.0"},
