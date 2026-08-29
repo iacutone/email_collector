@@ -35,10 +35,9 @@
 
     <header>
       <div class="container">
-        <a href="/" class="logo">collection.email</a>
+        <a href="/" class="logo">email-collection.com</a>
         <nav class="header-nav">
           <a href="/signin" class="nav-link">Sign in</a>
-          <a href="/auth/new" class="nav-button">Sign up</a>
         </nav>
       </div>
     </header>
@@ -50,9 +49,41 @@
           The developer-first email collection service that doesn't tank your Lighthouse scores. Clean APIs, no third-party JavaScript, maximum performance.
         </p>
 
-        <div class="hero-cta">
-          <a href="/auth/new" class="cta-button primary">Sign up - It's free</a>
-          <a href="/signin" class="cta-button secondary">Sign in</a>
+        <div class="signup-form-container">
+          <h3>Create your free account</h3>
+          <.form :let={f} for={@changeset} action={~p"/auth"} method="post">
+            <div class="signup-field">
+              <.input
+                field={f[:email]}
+                type="email"
+                label="Email address"
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+            <div class="signup-field">
+              <.input
+                field={f[:password]}
+                type="password"
+                label="Password"
+                placeholder="Password"
+                required
+              />
+            </div>
+            <div class="signup-field">
+              <.input
+                field={f[:password_confirmation]}
+                type="password"
+                label="Confirm Password"
+                placeholder="Confirm Password"
+                required
+              />
+            </div>
+            <.button type="submit" class="signup-submit">Get Started - It's Free</.button>
+          </.form>
+          <div class="signup-footer-link">
+            Already have an account? <a href={~p"/auth/login"}>Sign in</a>
+          </div>
         </div>
 
         <div class="performance-stats">

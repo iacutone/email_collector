@@ -17,11 +17,7 @@ defmodule EmailCollectorWeb.Router do
   end
 
   pipeline :api_with_cors do
-    plug CORSPlug,
-      origin: "*",
-      methods: ["POST", "OPTIONS"],
-      headers: ["Content-Type", "Authorization", "Accept"]
-
+    plug EmailCollectorWeb.Plugs.CorsPlug
     plug :accepts, ["json"]
   end
 
@@ -40,6 +36,8 @@ defmodule EmailCollectorWeb.Router do
     patch "/campaigns/:id", CampaignController, :update
     delete "/campaigns/:id", CampaignController, :delete
     get "/campaigns/:id/download", CampaignController, :download_csv
+    post "/campaigns/:id/origins", CampaignController, :add_origin
+    delete "/campaigns/:id/origins", CampaignController, :remove_origin
   end
 
   scope "/auth", EmailCollectorWeb do

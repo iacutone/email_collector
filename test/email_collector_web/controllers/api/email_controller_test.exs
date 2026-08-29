@@ -71,6 +71,102 @@ defmodule EmailCollectorWeb.Api.EmailControllerTest do
     end
   end
 
+  describe "CORS - POST /api/v1/emails/:campaign_id" do
+    test "allows request from allowed origin", %{conn: conn, campaign: campaign} do
+      {:ok, campaign} =
+        Campaigns.update_campaign(campaign, %{allowed_origins: ["https://myapp.com"]})
+
+      resp =
+        conn
+        |> put_req_header("origin", "https://myapp.com")
+        |> post("/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
+
+      assert resp.status == 201
+      assert get_resp_header(resp, "access-control-allow-origin") == ["https://myapp.com"]
+    end
+
+    test "blocks request from disallowed origin", %{conn: conn, campaign: campaign} do
+      {:ok, campaign} =
+        Campaigns.update_campaign(campaign, %{allowed_origins: ["https://myapp.com"]})
+
+      resp =
+        conn
+        |> put_req_header("origin", "https://evil.com")
+        |> post("/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
+
+      assert resp.status == 403
+      assert json_response(resp, 403)["error"] == "Origin not allowed"
+    end
+
+    test "blocks request when campaign has no allowed origins", %{conn: conn, campaign: campaign} do
+      resp =
+        conn
+        |> put_req_header("origin", "https://myapp.com")
+        |> post("/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
+
+      assert resp.status == 403
+      assert json_response(resp, 403)["error"] == "Origin not allowed"
+    end
+
+    test "passes through request with no Origin header (direct API call)", %{
+      conn: conn,
+      campaign: campaign
+    } do
+      # No origin header - direct server-to-server or curl call, not blocked by CORS
+      resp = post(conn, "/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
+
+      assert resp.status == 201
+    end
+
+    test "handles OPTIONS preflight for allowed origin", %{conn: conn, campaign: campaign} do
+      {:ok, campaign} =
+        Campaigns.update_campaign(campaign, %{allowed_origins: ["https://myapp.com"]})
+
+      resp =
+        conn
+        |> put_req_header("origin", "https://myapp.com")
+        |> options("/api/v1/emails/#{campaign.id}")
+
+      assert resp.status == 200
+      assert get_resp_header(resp, "access-control-allow-origin") == ["https://myapp.com"]
+      assert get_resp_header(resp, "access-control-allow-methods") == ["POST, OPTIONS"]
+    end
+
+    test "handles OPTIONS preflight for disallowed origin with no CORS headers", %{
+      conn: conn,
+      campaign: campaign
+    } do
+      resp =
+        conn
+        |> put_req_header("origin", "https://evil.com")
+        |> options("/api/v1/emails/#{campaign.id}")
+
+      assert resp.status == 200
+      assert get_resp_header(resp, "access-control-allow-origin") == []
+    end
+
+    test "allows localhost origin for development", %{conn: conn, campaign: campaign} do
+      {:ok, campaign} =
+        Campaigns.update_campaign(campaign, %{
+          allowed_origins: ["https://myapp.com", "http://localhost:3000"]
+        })
+
+      resp =
+        conn
+        |> put_req_header("origin", "http://localhost:3000")
+        |> post("/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
+
+      assert resp.status == 201
+      assert get_resp_header(resp, "access-control-allow-origin") == ["http://localhost:3000"]
+    end
+
+    test "CORS does not affect Vary header when no origin", %{conn: conn, campaign: campaign} do
+      resp = post(conn, "/api/v1/emails/#{campaign.id}", %{email: @valid_email_params})
+
+      assert get_resp_header(resp, "vary") == []
+    end
+  end
+
   describe "GET /api/v1/emails/:campaign_id" do
     test "lists emails for campaign", %{conn: conn, user: user, campaign: campaign} do
       {:ok, email1} =
