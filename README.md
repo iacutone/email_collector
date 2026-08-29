@@ -134,17 +134,15 @@ REPLICA_URL=s3://your-bucket/path
 ### Multiple Domains
 
 The application supports multiple domains out of the box:
-- `collection.email` (primary)
-- `www.collection.email`
-- `email.collection.email`
+- `email-collection.com` (primary)
+- `www.email-collection.com`
 
 Configure in `config/runtime.exs`:
 
 ```elixir
 check_origin: [
-  "https://collection.email",
-  "https://www.collection.email",
-  "https://email.collection.email"
+  "https://email-collection.com",
+  "https://www.email-collection.com"
 ]
 ```
 
