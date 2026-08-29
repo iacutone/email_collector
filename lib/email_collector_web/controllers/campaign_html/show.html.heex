@@ -36,6 +36,52 @@
     </div>
   </section>
 
+  <section class="origins-section">
+    <div class="info-card">
+      <h2>Allowed Origins</h2>
+      <p class="origins-description">
+        Only browser requests from these origins will be accepted for this campaign.
+        Add each domain your frontend runs on (e.g. <code>https://myapp.com</code>).
+        You can add multiple origins to support production, staging, and local development.
+      </p>
+
+      <%= if Enum.empty?(@campaign.allowed_origins) do %>
+        <div class="empty-state">
+          <p>No origins added yet. All browser cross-origin requests will be rejected until you add at least one.</p>
+        </div>
+      <% else %>
+        <ul class="origins-list">
+          <%= for origin <- @campaign.allowed_origins do %>
+            <li class="origin-item">
+              <span class="origin-value"><%= origin %></span>
+              <form action={~p"/campaigns/#{@campaign.id}/origins"} method="post">
+                <input type="hidden" name="_method" value="delete" />
+                <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+                <input type="hidden" name="origin" value={origin} />
+                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+              </form>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+
+      <form action={~p"/campaigns/#{@campaign.id}/origins"} method="post" class="add-origin-form">
+        <input type="hidden" name="_csrf_token" value={Plug.CSRFProtection.get_csrf_token()} />
+        <div class="add-origin-row">
+          <input
+            type="url"
+            name="origin"
+            placeholder="https://myapp.com"
+            class="origin-input"
+            required
+          />
+          <button type="submit" class="btn btn-primary">Add Origin</button>
+        </div>
+        <p class="origin-hint">Must include scheme and host, no trailing slash (e.g. <code>https://myapp.com</code>)</p>
+      </form>
+    </div>
+  </section>
+
   <section class="emails-section">
     <div class="emails-header">
       <h2>Collected Emails</h2>

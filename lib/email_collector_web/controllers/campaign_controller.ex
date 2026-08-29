@@ -141,6 +141,63 @@ defmodule EmailCollectorWeb.CampaignController do
     end
   end
 
+  def add_origin(conn, %{"id" => id, "origin" => origin}) do
+    user = conn.assigns.current_user
+
+    if user do
+      campaign = Campaigns.get_campaign!(id)
+
+      if campaign.user_id == user.id do
+        case Campaigns.add_allowed_origin(campaign, origin) do
+          {:ok, _campaign} ->
+            conn
+            |> put_flash(:info, "Origin added successfully")
+            |> redirect(to: ~p"/campaigns/#{id}")
+
+          {:error, changeset} ->
+            errors = format_changeset_errors(changeset)
+            message = get_in(errors, [:allowed_origins]) || "Invalid origin"
+
+            conn
+            |> put_flash(:error, message)
+            |> redirect(to: ~p"/campaigns/#{id}")
+        end
+      else
+        conn
+        |> put_flash(:error, "Campaign not found")
+        |> redirect(to: ~p"/profile")
+      end
+    else
+      conn
+      |> put_flash(:error, "You must be logged in")
+      |> redirect(to: ~p"/auth/login")
+    end
+  end
+
+  def remove_origin(conn, %{"id" => id, "origin" => origin}) do
+    user = conn.assigns.current_user
+
+    if user do
+      campaign = Campaigns.get_campaign!(id)
+
+      if campaign.user_id == user.id do
+        {:ok, _campaign} = Campaigns.remove_allowed_origin(campaign, origin)
+
+        conn
+        |> put_flash(:info, "Origin removed")
+        |> redirect(to: ~p"/campaigns/#{id}")
+      else
+        conn
+        |> put_flash(:error, "Campaign not found")
+        |> redirect(to: ~p"/profile")
+      end
+    else
+      conn
+      |> put_flash(:error, "You must be logged in")
+      |> redirect(to: ~p"/auth/login")
+    end
+  end
+
   def download_csv(conn, %{"id" => id}) do
     user = conn.assigns.current_user
 
@@ -203,5 +260,13 @@ defmodule EmailCollectorWeb.CampaignController do
     value
     |> to_string()
     |> csv_escape()
+  end
+
+  defp format_changeset_errors(changeset) do
+    Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
+      Enum.reduce(opts, msg, fn {key, value}, acc ->
+        String.replace(acc, "%{#{key}}", to_string(value))
+      end)
+    end)
   end
 end
