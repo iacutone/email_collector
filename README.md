@@ -16,7 +16,7 @@ A lightweight, high-performance email collection API built with Phoenix and Elix
 - 📊 **Campaign Management** - Organize emails into campaigns
 - 🔑 **API Key Authentication** - Secure access to your data
 - 💾 **SQLite Database** - Simple, serverless database with Litestream backups
-- 🌐 **CORS Enabled** - Easy integration from any frontend
+- 🌐 **Per-Campaign CORS** - Allowlist specific origins per campaign, no wildcard exposure
 - ⚡ **Real-time Updates** - Phoenix LiveView for admin dashboard
 
 ## Quick Start
@@ -81,6 +81,52 @@ Content-Type: application/json
 }
 ```
 
+## CORS - Allowed Origins
+
+By default all cross-origin browser requests to a campaign are rejected. To accept
+requests from your frontend you must register each origin in the campaign dashboard.
+
+### Why per-campaign origins?
+
+Unlike a wildcard `Access-Control-Allow-Origin: *`, this ensures only **your** domains
+can POST emails to **your** campaigns. A different user's campaign cannot be targeted
+from your site, and vice versa.
+
+### Adding an origin
+
+1. Log in and go to your campaign page
+2. Scroll to the **Allowed Origins** section
+3. Enter your frontend origin (scheme + host, no trailing slash):
+   ```
+   https://myapp.com
+   ```
+4. Click **Add Origin**
+
+You can add multiple origins per campaign - useful for production, staging, and local development:
+
+```
+https://myapp.com
+https://staging.myapp.com
+http://localhost:3000
+```
+
+### Integrating with your frontend
+
+```javascript
+// Browser fetch - Origin header is sent automatically
+const response = await fetch(
+  'https://email-collection.com/api/v1/emails/YOUR_CAMPAIGN_ID',
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: { name: 'user@example.com' } })
+  }
+)
+```
+
+If the origin of your page is not in the campaign's allowlist, Cloudflare and the
+server will both reject the request with a `403 Forbidden` response.
+
 ## Bot Protection
 
 EmailCollector uses a multi-layered approach to prevent bot abuse:
@@ -134,17 +180,15 @@ REPLICA_URL=s3://your-bucket/path
 ### Multiple Domains
 
 The application supports multiple domains out of the box:
-- `collection.email` (primary)
-- `www.collection.email`
-- `email.collection.email`
+- `email-collection.com` (primary)
+- `www.email-collection.com`
 
 Configure in `config/runtime.exs`:
 
 ```elixir
 check_origin: [
-  "https://collection.email",
-  "https://www.collection.email",
-  "https://email.collection.email"
+  "https://email-collection.com",
+  "https://www.email-collection.com"
 ]
 ```
 

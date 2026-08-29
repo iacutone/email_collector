@@ -137,50 +137,70 @@ header .container {
   line-height: 1.6;
 }
 
-.hero-cta {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 40px;
-  flex-wrap: wrap;
+/* Signup Form */
+.signup-form-container {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(100, 255, 218, 0.3);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 0 auto 50px;
+  max-width: 480px;
+  transition: all 0.3s ease;
 }
 
-.cta-button.primary {
+.signup-form-container:hover {
+  border-color: #64ffda;
+  box-shadow: 0 10px 40px rgba(100, 255, 218, 0.15);
+}
+
+.signup-form-container h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #64ffda;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.signup-field {
+  margin-bottom: 16px;
+}
+
+.signup-submit {
+  width: 100%;
+  margin-top: 8px;
+  padding: 14px;
   background: linear-gradient(45deg, #64ffda, #bb86fc);
   color: #0f0f23;
-  padding: 18px 40px;
-  border-radius: 50px;
-  text-decoration: none;
-  font-weight: 600;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 30px rgba(100, 255, 218, 0.3);
   border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 20px rgba(100, 255, 218, 0.3);
 }
 
-.cta-button.primary:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 15px 40px rgba(100, 255, 218, 0.5);
+.signup-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(100, 255, 218, 0.5);
 }
 
-.cta-button.secondary {
-  border: 2px solid #64ffda;
-  background: transparent;
+.signup-footer-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.signup-footer-link a {
   color: #64ffda;
-  padding: 16px 38px;
-  border-radius: 50px;
   text-decoration: none;
   font-weight: 600;
-  font-size: 1.1rem;
-  transition: all 0.3s ease;
 }
 
-.cta-button.secondary:hover {
-  background: #64ffda;
-  color: #0f0f23;
-  transform: translateY(-3px);
+.signup-footer-link a:hover {
+  text-decoration: underline;
 }
 
 #emailForm {

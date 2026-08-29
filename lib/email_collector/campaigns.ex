@@ -64,4 +64,20 @@ defmodule EmailCollector.Campaigns do
     |> where(user_id: ^user_id)
     |> Repo.all()
   end
+
+  @doc """
+  Adds an origin to a campaign's allowed_origins list.
+  """
+  def add_allowed_origin(%Campaign{} = campaign, origin) do
+    origins = Enum.uniq([origin | campaign.allowed_origins])
+    update_campaign(campaign, %{allowed_origins: origins})
+  end
+
+  @doc """
+  Removes an origin from a campaign's allowed_origins list.
+  """
+  def remove_allowed_origin(%Campaign{} = campaign, origin) do
+    origins = Enum.reject(campaign.allowed_origins, &(&1 == origin))
+    update_campaign(campaign, %{allowed_origins: origins})
+  end
 end
